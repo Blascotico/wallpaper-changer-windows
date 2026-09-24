@@ -56,7 +56,7 @@ fn to_grey_rgb(image: &RgbImage) -> RgbImage {
 }
 
 /// The mean of the luminance histogram, rounded as `int(mean + 0.5)`.
-fn mean_luma(image: &RgbImage) -> u8 {
+pub(crate) fn mean_luma(image: &RgbImage) -> u8 {
     let mut total: u64 = 0;
     for pixel in image.pixels() {
         total += luma(pixel[0], pixel[1], pixel[2]) as u64;

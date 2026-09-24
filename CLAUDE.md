@@ -39,7 +39,7 @@ halves:
   hotkeys.
 - **`desktop/src-tauri/crates/wallpaper-core/`** — the engine. Owns everything touching
   Win32: composition, applying, the WORKERW video layer, window transparency, the
-  scroll hook. It answers **all 45 methods**, and deliberately has **no `tauri`
+  scroll hook. It answers **all 47 methods**, and deliberately has **no `tauri`
   dependency**, so it stays testable headless.
 
 The webview reaches the engine only through the `engine_call` command, which funnels
@@ -54,9 +54,10 @@ state-ownership unit at a time through a strangler seam at `Engine::call`. The P
 gone; `openspec/changes/port-engine-to-rust/tasks.md` records what was learned doing it,
 including several behaviours that look arbitrary and are not.
 
-Because the engine is in-process, three things must be given up explicitly on the way
-out — they used to die with the sidecar. `Engine::shutdown` stops the rotation timer,
-removes the system-wide mouse hook, and destroys the video host windows.
+Because the engine is in-process, four things must be given up explicitly on the way
+out — the first three used to die with the sidecar. `Engine::shutdown` stops the
+rotation timer, removes the system-wide mouse hook, removes the all-windows WinEvent
+hook **and restores every window it faded**, and destroys the video host windows.
 
 **Where things live:**
 - `collage.rs` — grid layout, `fit_image`, and `compose_collage`
@@ -66,7 +67,10 @@ removes the system-wide mouse hook, and destroys the video host windows.
 - `session.rs` — everything that outlives a call: the apply lock, history, the rotation
   timer, unsaved settings
 - `video.rs` / `workerw.rs` — libmpv and the desktop layer
+- `adjust.rs` — the picture adjustments (brightness, contrast, saturation, warmth, blur,
+  vignette), run after the effect
 - `transparency.rs` / `scroll.rs` — window fading, by slider and by wheel
+- `window_watch.rs` — one opacity for every window, open now or opened later
 - `parallel.rs` — the bounded worker pool both composition and thumbnails use
 - `cli.rs` (in the shell) — `apply`, `watch`, `video`, driving the same `dispatch`
 
@@ -94,7 +98,8 @@ check a build.
 3. `selection.rs` — picks images (random with JSON history, or sequential)
 4. `collage.rs` — plans the grid, fits each picture (`fill`/`fit`/`stretch`/`center`/`span`), pastes the composite
 5. `effects.rs` — optionally applies `normal`/`bw`/`vintage`/`hdr`
-6. `apply.rs` — writes the BMP and calls `SystemParametersInfoW`
+6. `adjust.rs` — the `[display]` adjustment sliders, per monitor for blur and vignette
+7. `apply.rs` — writes the BMP and calls `SystemParametersInfoW`
 
 **The preview is editable.** `plan_collage()` in `collage.rs` is the single source of truth for which image lands in which rectangle; `compose_collage` draws from it and the `preview` RPC returns it as `cells` (composite pixel coords + `image_index`) so the UI can lay a hit target over every picture. Never reimplement the grid rules in TypeScript — a drag would then swap the wrong images the moment `columns_for` changes. Dragging one cell onto another swaps those entries in the pinned selection and re-renders; clicking one opens a picker fed by `get_thumbnails` (the webview cannot read local files, so pictures only reach it as base64). Because the user can edit the list, it can end up shorter than the grid — `compose_collage` wraps with a modulo rather than raising.
 
@@ -111,6 +116,8 @@ check a build.
 - `session.rs` — the apply lock (never queues: a second concurrent apply is told `busy`), the history, the rotation timer, and the live-but-unsaved settings.
 - `video.rs` / `workerw.rs` — libmpv loaded at runtime, and the WORKERW desktop layer. One dedicated thread owns every host window, because `DestroyWindow` may only be called by the thread that created it and fails *silently* otherwise.
 - `scroll.rs` — modifier+wheel window fading. Windows silently unhooks a `WH_MOUSE_LL` callback slower than `LowLevelHooksTimeout` (300 ms), so the callback only sends a wheel count down a channel and a worker thread does the process lookup, the `SetLayeredWindowAttributes` call and the 0.6 s debounced save. That save is a read-modify-write of `transparency.json`, so a fade saved from the window is not clobbered by the next scroll.
+- `adjust.rs` — the six adjustment sliders. They are integers in `[display]` (a whole-number float would come back from `json_to_toml_value` as an integer), and **all-zero is an exact identity**: that is what keeps the Pillow goldens meaningful, since these have no Pillow counterpart. Blur and vignette run per monitor rectangle so they neither bleed across a seam nor treat three screens as one oval, and are sized as a share of the monitor so the preview matches the desktop. Brightness, contrast and saturation also reach the video wallpaper as mpv's own properties — set at start and live on `save_config`; warmth, blur and vignette do not, because they would need a filter graph on a software-decoded stream.
+- `window_watch.rs` — the all-windows fade. `SetWinEventHook` for `SHOW`, `UNCLOAKED` (Store apps are created cloaked and are never shown by `ShowWindow`) and `DESTROY`, on a hook thread that only forwards handles; a worker fades, and remembers each window's previous `Layering` so `stop` can put it back. **A window that is already layered and fails `GetLayeredWindowAttributes` is left alone** — it draws with `UpdateLayeredWindow`, and `SetLayeredWindowAttributes` would turn it into a black rectangle. One already faded with its own alpha gets that alpha back, not 255. **The global value wins over the per-app values in `transparency.json`** while it is on: that file fills with near-opaque leftovers from the scroll wheel, and letting them win made the slider do nothing visible. They come back when it is turned off, since each window is restored to the alpha it had. Windows keeps no opacity across a reboot, so persistence is `[transparency] all_windows` plus `Engine::spawn` re-syncing at launch — it survives a restart only while autostart is on. Elevated windows refuse the fade (UIPI) and are simply not tracked.
 - `i18n.rs` — the translation tables; supported languages `en`, `pt_BR`, `ja`.
 - `parallel.rs` — `map_bounded`, the four-worker pool composition and thumbnails share. Four rather than the core count because each worker holds a decoded full-size image.
 
@@ -131,7 +138,10 @@ Override both locations with `WALLPAPER_CHANGER_CONFIG_DIR` / `WALLPAPER_CHANGER
 **Never let `cargo test` touch the real desktop.** Applying a wallpaper, fading a
 window, or embedding anything in the desktop layer belongs in an `#[ignore]`d test —
 see `tests/desktop_layer.rs`. Win32 behaviour is otherwise expressed through traits
-with fakes: `WallpaperSetter`, `Notifier`, `scroll::Desktop`.
+with fakes: `WallpaperSetter`, `Notifier`, `scroll::Desktop`, `window_watch::Windows`.
+The conformance cases for `sync_all_windows_opacity` only ever send
+`all_windows = false`, and `Session` holds the real watch — so no session test may turn
+it on either.
 
 **The golden images are Pillow's output**, frozen while the Python engine still
 existed, and there is no way to make more of them. When composition changes
@@ -143,7 +153,9 @@ is language-neutral. A method answering `unknown_method` is a failure, not a ski
 
 Collage grid supports 1–8 images per monitor, validated in `cli.rs` and in the engine.
 Effect and fit-mode choices are string literals; adding one means updating
-`effects.rs`/`collage.rs` **and** the `EFFECTS` list in `cli.rs`.
+`effects.rs`/`collage.rs` **and** the `EFFECTS` list in `cli.rs`. An adjustment slider
+lives in three lists: `RANGES` in `adjust.rs`, `ADJUSTMENTS` in `desktop/src/lib/engine.ts`
+(which also feeds the preview's re-render signature), and the flags in `cli.rs`.
 
 ## Build notes
 

@@ -26,6 +26,7 @@
 use std::sync::Arc;
 use std::time::Duration;
 
+use wallpaper_core::adjust::Adjustments;
 use wallpaper_core::{monitor, video, workerw, NullSink};
 
 /// How many start/stop cycles the window soak runs.
@@ -96,7 +97,13 @@ fn host_windows_never_outlive_their_player() {
     let player = video::VideoPlayer::new(Arc::new(NullSink));
     for cycle in 0..cycles {
         player
-            .start(videos.clone(), true, false, monitors.clone())
+            .start(
+                videos.clone(),
+                true,
+                false,
+                monitors.clone(),
+                Adjustments::default(),
+            )
             .unwrap_or_else(|e| panic!("cycle {cycle}: {e}"));
         player.stop();
         if cycle % 25 == 24 {
@@ -127,7 +134,9 @@ fn an_empty_playlist_never_reaches_the_desktop() {
     let monitors = monitor::get_monitors().expect("monitors");
     let player = video::VideoPlayer::new(Arc::new(NullSink));
 
-    assert!(player.start(Vec::new(), true, false, monitors).is_err());
+    assert!(player
+        .start(Vec::new(), true, false, monitors, Adjustments::default())
+        .is_err());
     assert_eq!(
         workerw::children(parent).len(),
         before,
@@ -156,7 +165,13 @@ fn video_really_plays_and_really_stops() {
     let player = video::VideoPlayer::new(Arc::new(NullSink));
 
     player
-        .start(videos.clone(), true, false, monitors)
+        .start(
+            videos.clone(),
+            true,
+            false,
+            monitors,
+            Adjustments::default(),
+        )
         .expect("video did not start");
 
     // mpv loads asynchronously; asking immediately can beat the first file.

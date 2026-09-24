@@ -16,6 +16,7 @@ use std::path::{Path, PathBuf};
 use image::RgbImage;
 use serde_json::Value;
 
+use crate::adjust::{self, Adjustments};
 use crate::collage::{compose_collage, fit_image, paste};
 use crate::monitor::{virtual_desktop, Monitor};
 use crate::{effects, CoreError};
@@ -166,12 +167,16 @@ pub fn apply_collage(
 }
 
 /// One picture, repeated at every screen's own size.
+///
+/// *effect* and *adjust* are the caller's to choose: a saved single-screen crop
+/// already carries both, so it passes `"normal"` and the neutral adjustments.
 pub fn apply_single(
     image_path: &Path,
     monitors: &[Monitor],
     output_dir: &Path,
     fit_mode: &str,
     effect: &str,
+    adjust: &Adjustments,
     setter: &dyn WallpaperSetter,
 ) -> Result<PathBuf, CoreError> {
     let source = open_rgb(image_path)?;
@@ -182,6 +187,7 @@ pub fn apply_single(
         paste(&mut canvas, &fitted, monitor.x - min_x, monitor.y - min_y);
     }
     let canvas = effects::apply_effect(&canvas, effect)?;
+    let canvas = adjust::apply(canvas, adjust, monitors);
     let out = output_dir.join("wallpaper_default.bmp");
     write_and_set(&canvas, &out, setter)?;
     Ok(out)
@@ -299,7 +305,16 @@ mod tests {
         let picture = a_picture(&dir, "src.png");
         let setter = FakeSetter::default();
 
-        let out = apply_single(&picture, &monitors(), &dir, "fill", "normal", &setter).unwrap();
+        let out = apply_single(
+            &picture,
+            &monitors(),
+            &dir,
+            "fill",
+            "normal",
+            &Adjustments::default(),
+            &setter,
+        )
+        .unwrap();
 
         assert_eq!(out.file_name().unwrap(), "wallpaper_default.bmp");
         assert_eq!(setter.applied.lock().unwrap().as_slice(), &[out.clone()]);

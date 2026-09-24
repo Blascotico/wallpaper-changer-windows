@@ -16,6 +16,7 @@ use std::path::{Path, PathBuf};
 use image::RgbImage;
 use serde_json::{json, Value};
 
+use crate::adjust::Adjustments;
 use crate::monitor::{virtual_desktop, Monitor};
 use crate::CoreError;
 
@@ -361,6 +362,7 @@ pub fn compose_collage(
         .and_then(Value::as_str)
         .unwrap_or("normal");
     let canvas = crate::effects::apply_effect(&canvas, effect)?;
+    let canvas = crate::adjust::apply(canvas, &Adjustments::from_config(cfg), monitors);
 
     let used = chosen
         .iter()

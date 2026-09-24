@@ -90,7 +90,7 @@ mod tests {
             translations["en"].as_object().unwrap().keys().collect();
         // A tripwire, not a fact about the UI: bump it deliberately when adding a
         // string, so a key that appears in one table by accident cannot pass.
-        assert_eq!(english.len(), 268);
+        assert_eq!(english.len(), 282);
         for (code, table) in translations {
             let keys: std::collections::BTreeSet<&String> =
                 table.as_object().unwrap().keys().collect();

@@ -53,6 +53,8 @@ features = [
     "Win32_Graphics_Dwm",
     "Win32_System_Threading",
     "Win32_UI_Input_KeyboardAndMouse",
+    # SetWinEventHook, for the all-windows opacity watch (window_watch.rs).
+    "Win32_UI_Accessibility",
 ]
 
 [dev-dependencies]

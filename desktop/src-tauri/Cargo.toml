@@ -46,6 +46,14 @@ incremental = true # Compile your binary in smaller steps.
 [profile.dev.package."*"]
 opt-level = 3
 
+# `"*"` means *dependencies*, and the engine is a workspace member, so it was still
+# built at opt-level 0 — and composition is its own code: paste, the fit arithmetic,
+# the effects and the adjustment passes. A collage took ~10 s to compose under
+# `tauri dev` against ~0.3 s optimised, with every core busy for all of it. The shell
+# stays debuggable; the engine is what does per-pixel work.
+[profile.dev.package.wallpaper-core]
+opt-level = 3
+
 [profile.release]
 codegen-units = 1 # Allows LLVM to perform better optimization.
 lto = true        # Enables link-time-optimizations.

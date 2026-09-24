@@ -3,7 +3,7 @@ import { toast } from "sonner"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
@@ -18,6 +18,7 @@ import { Switch } from "@/components/ui/switch"
 import {
   engine,
   onEngineEvent,
+  type AllWindowsOpacityStatus,
   type Config,
   type ScrollModifier,
   type ScrollTransparencyStatus,
@@ -27,6 +28,17 @@ import type { I18n } from "@/lib/use-i18n"
 import { cn } from "@/lib/utils"
 
 const FULLY_OPAQUE = 255
+
+/** The floor shared by every opacity slider, and by the engine. */
+const MIN_ALPHA = 20
+
+/** What the all-windows slider starts at before it has been set: 80%. */
+const DEFAULT_ALL_WINDOWS_ALPHA = 204
+
+/** How long the all-windows slider rests before the desktop is re-faded. */
+const LIVE_DELAY_MS = 120
+
+const percent = (alpha: number) => Math.round((alpha / FULLY_OPAQUE) * 100)
 
 /** Display names for the modifiers the engine accepts. */
 const MODIFIER_LABELS: Record<ScrollModifier, string> = {
@@ -55,6 +67,8 @@ export function TransparencyTab({ config, i18n, savedAt, onChange }: Props) {
   const [alpha, setAlpha] = React.useState(FULLY_OPAQUE)
   const [saved, setSaved] = React.useState<Record<string, number>>({})
   const [scroll, setScroll] = React.useState<ScrollTransparencyStatus | null>(null)
+  const [allWindows, setAllWindows] = React.useState<AllWindowsOpacityStatus | null>(null)
+  const liveTimer = React.useRef<number | undefined>(undefined)
 
   const refresh = React.useCallback(async () => {
     try {
@@ -77,7 +91,11 @@ export function TransparencyTab({ config, i18n, savedAt, onChange }: Props) {
   // the badge would otherwise keep claiming whatever was true at mount.
   React.useEffect(() => {
     void engine.scrollTransparencyStatus().then(setScroll).catch(() => {})
+    void engine.allWindowsOpacityStatus().then(setAllWindows).catch(() => {})
   }, [savedAt])
+
+  // A pending live update must not land after the screen has gone.
+  React.useEffect(() => () => window.clearTimeout(liveTimer.current), [])
 
   React.useEffect(() => {
     // Scrolling edits the same opacity map this screen shows, so follow it live
@@ -99,6 +117,25 @@ export function TransparencyTab({ config, i18n, savedAt, onChange }: Props) {
   const scrollEnabled = config.hotkeys.scroll_enabled ?? false
   const scrollModifier = config.hotkeys.scroll_modifier ?? "alt"
   const scrollUnavailable = scroll !== null && !scroll.available
+
+  const allEnabled = config.transparency?.all_windows ?? false
+  const allAlpha = config.transparency?.all_windows_alpha ?? DEFAULT_ALL_WINDOWS_ALPHA
+  const allUnavailable = allWindows !== null && !allWindows.available
+
+  // Edits the draft like every other setting, and also shows it on the real desktop
+  // straight away — the point of an opacity slider is seeing the windows change.
+  // Saving is what makes it stick, and what brings it back after a restart.
+  function onAllWindowsChange(next: { all_windows: boolean; all_windows_alpha: number }) {
+    onChange("transparency", "all_windows", next.all_windows)
+    onChange("transparency", "all_windows_alpha", next.all_windows_alpha)
+    window.clearTimeout(liveTimer.current)
+    liveTimer.current = window.setTimeout(() => {
+      void engine
+        .syncAllWindowsOpacity({ transparency: next })
+        .then(setAllWindows)
+        .catch((e) => toast.error((e as Error).message))
+    }, LIVE_DELAY_MS)
+  }
 
   function select(win: WindowInfo) {
     setSelected(win)
@@ -126,6 +163,58 @@ export function TransparencyTab({ config, i18n, savedAt, onChange }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("all_windows")}</CardTitle>
+          {allWindows?.running && (
+            <CardAction>
+              <Badge>{t("active")}</Badge>
+            </CardAction>
+          )}
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          <p className="text-sm text-muted-foreground">{t("all_windows_hint")}</p>
+
+          <div className="flex items-center justify-between">
+            <Label htmlFor="all-windows-enabled" className="font-normal">
+              {t("all_windows_enable")}
+            </Label>
+            <Switch
+              id="all-windows-enabled"
+              checked={allEnabled}
+              disabled={allUnavailable}
+              onCheckedChange={(v) =>
+                onAllWindowsChange({ all_windows: v, all_windows_alpha: allAlpha })
+              }
+            />
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Slider
+              min={MIN_ALPHA}
+              max={FULLY_OPAQUE}
+              step={1}
+              value={[allAlpha]}
+              disabled={!allEnabled || allUnavailable}
+              onValueChange={(v) =>
+                onAllWindowsChange({
+                  all_windows: allEnabled,
+                  all_windows_alpha: Array.isArray(v) ? v[0] : v,
+                })
+              }
+            />
+            <span className="w-16 text-right font-mono text-sm">{percent(allAlpha)}%</span>
+          </div>
+
+          {allWindows?.running && (
+            <p className="text-xs text-muted-foreground">
+              {t("all_windows_faded", { n: allWindows.faded })}
+            </p>
+          )}
+          <p className="text-xs text-muted-foreground">{t("all_windows_persist_hint")}</p>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader className="flex-row items-center justify-between">
           <CardTitle>{t("scroll_transparency")}</CardTitle>
@@ -232,16 +321,14 @@ export function TransparencyTab({ config, i18n, savedAt, onChange }: Props) {
           </p>
           <div className="flex items-center gap-4">
             <Slider
-              min={20}
+              min={MIN_ALPHA}
               max={FULLY_OPAQUE}
               step={1}
               value={[alpha]}
               disabled={!selected}
               onValueChange={(v) => onAlphaChange(Array.isArray(v) ? v[0] : v)}
             />
-            <span className="w-16 text-right font-mono text-sm">
-              {Math.round((alpha / FULLY_OPAQUE) * 100)}%
-            </span>
+            <span className="w-16 text-right font-mono text-sm">{percent(alpha)}%</span>
           </div>
           <div className="flex gap-2">
             <Button onClick={persist} disabled={!selected}>

@@ -36,10 +36,12 @@ use std::time::Duration;
 
 use serde_json::{json, Map, Value};
 
+use crate::adjust::Adjustments;
 use crate::apply::{self, WallpaperSetter};
 use crate::notify::Notifier;
 use crate::scroll::{self, ScrollHook};
 use crate::video::{self, VideoPlayer};
+use crate::window_watch::{self, WindowWatch};
 use crate::{blocking, config, effects, gallery, monitor, CoreError, EventSink};
 
 /// How many applied image sets the "previous wallpaper" hotkey can step back
@@ -119,6 +121,8 @@ pub struct Session {
     video: VideoPlayer,
     /// The modifier+wheel hook. Owns two threads of its own while it is running.
     scroll: ScrollHook,
+    /// The all-windows fade. A system-wide WinEvent hook and a worker, while on.
+    windows: WindowWatch,
 }
 
 impl Session {
@@ -138,6 +142,7 @@ impl Session {
             watch: Mutex::new(Watch::default()),
             video: VideoPlayer::new(Arc::clone(&events_for_scroll)),
             scroll: ScrollHook::new(events_for_scroll),
+            windows: WindowWatch::new(),
         }
     }
 
@@ -326,10 +331,19 @@ impl Session {
         let output_dir = self.output_dir(&cfg)?;
         let fit_mode = string_at(&cfg, "/display/fit_mode", "fill");
         let effect = string_at(&cfg, "/display/effect", "normal");
+        let adjust = Adjustments::from_config(&cfg);
         let setter = Arc::clone(&self.setter);
 
         let out = blocking(move || {
-            apply::apply_single(&path, &monitors, &output_dir, &fit_mode, &effect, &*setter)
+            apply::apply_single(
+                &path,
+                &monitors,
+                &output_dir,
+                &fit_mode,
+                &effect,
+                &adjust,
+                &*setter,
+            )
         })
         .await?;
         Ok(self.announce(out, vec![raw]))
@@ -380,6 +394,7 @@ impl Session {
                     &output_dir,
                     &fit_mode,
                     "normal",
+                    &Adjustments::default(),
                     &*setter,
                 )
             }
@@ -563,6 +578,48 @@ impl Session {
         self.scroll.stop();
     }
 
+    // ── one opacity for every window ─────────────────────────────────────────
+
+    /// `sync_all_windows_opacity` — match the watch to the settings.
+    ///
+    /// Takes a draft so the slider can show its value on the real desktop before it
+    /// is saved, the way the per-window slider does. Called with none at start-up —
+    /// which is what brings the fade back after a reboot — and after every save.
+    pub fn sync_all_windows_opacity(&self, draft: Option<&Value>) -> Result<Value, CoreError> {
+        let cfg = self.merged(draft)?;
+        self.windows.set(window_watch::configured_alpha(&cfg));
+        self.all_windows_opacity_status_for(&cfg)
+    }
+
+    /// `all_windows_opacity_status` — what the watch is doing, against the saved
+    /// settings.
+    pub fn all_windows_opacity_status(&self) -> Result<Value, CoreError> {
+        let cfg = self.config()?;
+        self.all_windows_opacity_status_for(&cfg)
+    }
+
+    /// `enabled` is what the settings ask for, `running` whether the hook is in; they
+    /// differ when it could not be installed, which is what the badge has to show.
+    fn all_windows_opacity_status_for(&self, cfg: &Value) -> Result<Value, CoreError> {
+        let mut status = self.windows.status();
+        if let Some(status) = status.as_object_mut() {
+            status.insert(
+                "enabled".to_string(),
+                json!(window_watch::configured_alpha(cfg).is_some()),
+            );
+            status.insert("available".to_string(), json!(cfg!(windows)));
+        }
+        Ok(status)
+    }
+
+    /// Unhook and restore every faded window on the way out of the process.
+    ///
+    /// Left behind, the windows would stay faded with nothing to bring them back,
+    /// and the hook would outlive the process that installed it.
+    pub fn stop_windows_for_exit(&self) {
+        self.windows.stop();
+    }
+
     /// `notify` — show the user a toast.
     pub fn notify(&self, title: &str, message: &str) -> Result<Value, CoreError> {
         self.notifier.notify(title, message)?;
@@ -580,7 +637,9 @@ impl Session {
     pub async fn video_start(&self, draft: Option<&Value>) -> Result<Value, CoreError> {
         let cfg = self.merged(draft)?;
         let (videos, loop_playlist, sound, monitors) = video::start_inputs(&cfg)?;
-        self.video.start(videos, loop_playlist, sound, monitors)?;
+        let picture = Adjustments::from_config(&cfg);
+        self.video
+            .start(videos, loop_playlist, sound, monitors, picture)?;
         // Session state, not a preference: the next launch comes back the way the user
         // left it. Written the moment it changes, from wherever it changed.
         self.remember("video", "enabled", Value::Bool(true)).await;
@@ -724,6 +783,14 @@ impl Session {
         // The scroll hook holds a system-wide hook, so it has to follow the saved
         // settings immediately rather than waiting for a restart.
         let _ = self.sync_scroll_transparency();
+        // Likewise the window hook — and a changed alpha has to reach every window now.
+        let _ = self.sync_all_windows_opacity(None);
+
+        // A playing video takes the saved picture adjustments live, rather than only
+        // on its next start.
+        if self.video.is_running() {
+            self.video.set_picture(Adjustments::from_config(&merged));
+        }
 
         Ok(json!({ "saved": true, "config_path": config_path }))
     }

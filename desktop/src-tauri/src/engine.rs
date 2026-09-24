@@ -114,6 +114,17 @@ impl Engine {
             Err(e) => log::warn!("could not start scroll transparency: {e}"),
         }
 
+        // The all-windows fade has nothing of its own that survives a reboot — Windows
+        // forgets a window's opacity with the window — so this is what brings it back.
+        // With autostart on, that is every login.
+        match core.session().sync_all_windows_opacity(None) {
+            Ok(status) if status["running"] == true => {
+                log::info!("all-windows opacity active at {}", status["alpha"]);
+            }
+            Ok(_) => {}
+            Err(e) => log::warn!("could not start the all-windows opacity: {e}"),
+        }
+
         Ok(Self { core })
     }
 
@@ -130,8 +141,9 @@ impl Engine {
 
     /// Release everything that outlives the process if it is not let go of.
     ///
-    /// All three of these used to belong to the sidecar and died with it. In-process
-    /// they have to be given up explicitly, and this runs from `RunEvent::Exit`.
+    /// The first three used to belong to the sidecar and died with it; the window
+    /// fade is newer, and the same kind of thing. In-process they have to be given up
+    /// explicitly, and this runs from `RunEvent::Exit`.
     pub fn shutdown(&self) {
         // A tick during teardown would composite and call `SystemParametersInfoW` on a
         // process on its way out. This does not clear `rotation_active`, so a rotation
@@ -140,6 +152,9 @@ impl Engine {
         // A WH_MOUSE_LL hook is system-wide: leaving it installed would route every
         // wheel event on the machine through a process that is going away.
         self.core.session().stop_scroll_for_exit();
+        // The same for the WinEvent hook — and every window it faded goes back to how
+        // it was, since nothing would be left to manage them.
+        self.core.session().stop_windows_for_exit();
         // The video host windows are children of WORKERW, so they sit on the desktop
         // until Explorer restarts if they are not destroyed here.
         self.core.session().stop_video_for_exit();

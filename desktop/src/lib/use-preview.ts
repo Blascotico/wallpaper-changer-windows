@@ -12,7 +12,7 @@
  */
 import * as React from "react"
 
-import { engine, type Config, type PreviewCell } from "@/lib/engine"
+import { ADJUSTMENTS, engine, type Config, type PreviewCell } from "@/lib/engine"
 
 const DEBOUNCE_MS = 350
 
@@ -119,7 +119,12 @@ export function usePreview(config: Config | null, maxWidth = 900): Preview {
   // actually change the picture belong here; watching the whole config would
   // re-render the preview when an unrelated hotkey changes.
   const signature = config
-    ? JSON.stringify([selectionSignature, config.display.fit_mode, config.display.effect])
+    ? JSON.stringify([
+        selectionSignature,
+        config.display.fit_mode,
+        config.display.effect,
+        ...ADJUSTMENTS.map(({ key }) => config.display[key] ?? 0),
+      ])
     : null
 
   React.useEffect(() => {

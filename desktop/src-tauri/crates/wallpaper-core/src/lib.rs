@@ -23,6 +23,7 @@ use std::sync::Arc;
 
 use serde_json::{json, Value};
 
+pub mod adjust;
 pub mod apply;
 pub mod collage;
 pub mod compose;
@@ -41,6 +42,7 @@ pub mod session;
 pub mod startup;
 pub mod transparency;
 pub mod video;
+pub mod window_watch;
 pub mod workerw;
 
 pub use apply::{WallpaperSetter, WindowsSetter};
@@ -87,6 +89,8 @@ pub const METHODS: &[&str] = &[
     "reapply_opacity_settings",
     "scroll_transparency_status",
     "sync_scroll_transparency",
+    "all_windows_opacity_status",
+    "sync_all_windows_opacity",
     "scan_videos",
     "video_start",
     "video_stop",
@@ -620,6 +624,18 @@ impl Core {
                 self.session.scroll_transparency_status()
             }),
 
+            // Takes the unsaved settings, so the slider can be tried on the real
+            // desktop before it is saved.
+            "sync_all_windows_opacity" => handled(|| {
+                reject_unexpected(params, &["config"], "sync_all_windows_opacity")?;
+                self.session.sync_all_windows_opacity(params.get("config"))
+            }),
+
+            "all_windows_opacity_status" => handled(|| {
+                reject_unexpected(params, &[], "all_windows_opacity_status")?;
+                self.session.all_windows_opacity_status()
+            }),
+
             "get_capabilities" => handled(|| {
                 reject_unexpected(params, &[], "get_capabilities")?;
                 Ok(json!({
@@ -693,6 +709,7 @@ impl Core {
                 reject_unexpected(params, &[], "shutdown")?;
                 self.session.stop_rotation_for_exit();
                 self.session.stop_scroll_for_exit();
+                self.session.stop_windows_for_exit();
                 self.session.stop_video_for_exit();
                 Ok(json!({ "bye": true }))
             }),
@@ -879,7 +896,8 @@ mod tests {
     /// The allowlist must stay in step with `Engine._METHODS` in `rpc.py`.
     #[test]
     fn allowlist_has_every_method() {
-        assert_eq!(METHODS.len(), 45, "rpc.py's _METHODS has 45 entries");
+        // rpc.py's _METHODS had 45; the two all-windows opacity methods came after it.
+        assert_eq!(METHODS.len(), 47);
         let mut sorted = METHODS.to_vec();
         sorted.sort_unstable();
         sorted.dedup();
@@ -924,6 +942,8 @@ mod tests {
         "reapply_opacity_settings",
         "sync_scroll_transparency",
         "scroll_transparency_status",
+        "sync_all_windows_opacity",
+        "all_windows_opacity_status",
         "get_capabilities",
         "video_status",
         "video_start",

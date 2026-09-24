@@ -57,6 +57,24 @@ enum Command {
         /// normal | bw | vintage | hdr
         #[arg(long, value_parser = EFFECTS)]
         effect: Option<String>,
+        /// -100 .. 100
+        #[arg(long, allow_negative_numbers = true, value_parser = clap::value_parser!(i64).range(-100..=100))]
+        brightness: Option<i64>,
+        /// -100 .. 100
+        #[arg(long, allow_negative_numbers = true, value_parser = clap::value_parser!(i64).range(-100..=100))]
+        contrast: Option<i64>,
+        /// -100 .. 100
+        #[arg(long, allow_negative_numbers = true, value_parser = clap::value_parser!(i64).range(-100..=100))]
+        saturation: Option<i64>,
+        /// -100 (cool) .. 100 (warm)
+        #[arg(long, allow_negative_numbers = true, value_parser = clap::value_parser!(i64).range(-100..=100))]
+        warmth: Option<i64>,
+        /// 0 .. 100
+        #[arg(long, value_parser = clap::value_parser!(i64).range(0..=100))]
+        blur: Option<i64>,
+        /// 0 .. 100
+        #[arg(long, value_parser = clap::value_parser!(i64).range(0..=100))]
+        vignette: Option<i64>,
         /// A settings.toml to use instead of the installed one.
         #[arg(long)]
         config: Option<PathBuf>,
@@ -128,6 +146,12 @@ async fn execute(command: Command) -> i32 {
             selection,
             collage_count,
             effect,
+            brightness,
+            contrast,
+            saturation,
+            warmth,
+            blur,
+            vignette,
             config,
         } => {
             let mut draft = match base_config(config.as_deref()) {
@@ -147,6 +171,16 @@ async fn execute(command: Command) -> i32 {
                 collage_count.map(|n| Value::from(u64::from(n))),
             );
             set_in(&mut draft, "display", "effect", effect.map(Value::from));
+            for (key, value) in [
+                ("brightness", brightness),
+                ("contrast", contrast),
+                ("saturation", saturation),
+                ("warmth", warmth),
+                ("blur", blur),
+                ("vignette", vignette),
+            ] {
+                set_in(&mut draft, "display", key, value.map(Value::from));
+            }
 
             match call(&core, "apply_wallpaper", json!({ "config": draft })).await {
                 Ok(result) => {
@@ -332,6 +366,22 @@ mod tests {
     fn an_unknown_effect_is_refused_before_anything_is_composed() {
         assert!(Cli::try_parse_from(["wallpaper-changer", "apply", "--effect", "vintage"]).is_ok());
         assert!(Cli::try_parse_from(["wallpaper-changer", "apply", "--effect", "sepia"]).is_err());
+    }
+
+    #[test]
+    fn adjustments_are_held_to_their_ranges_and_take_negative_values() {
+        let parses = |args: &[&str]| {
+            let mut argv = vec!["wallpaper-changer", "apply"];
+            argv.extend_from_slice(args);
+            Cli::try_parse_from(argv).is_ok()
+        };
+        assert!(parses(&["--brightness", "-40", "--warmth", "100"]));
+        assert!(parses(&["--blur", "0", "--vignette", "100"]));
+        assert!(!parses(&["--contrast", "101"]));
+        assert!(!parses(&["--saturation", "-101"]));
+        // Blur and vignette have no negative side.
+        assert!(!parses(&["--blur", "-1"]));
+        assert!(!parses(&["--vignette", "-10"]));
     }
 
     #[test]

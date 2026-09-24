@@ -77,6 +77,44 @@
           }
         }
       ]
+    },
+    {
+      "name": "the all-windows fade reports what is installed",
+      "steps": [
+        {
+          "method": "all_windows_opacity_status",
+          "expect": {
+            "ok": true,
+            "result": { "running": false, "faded": 0, "enabled": false },
+            "result_types": { "available": "boolean" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "syncing the all-windows fade while it is off changes nothing",
+      "note": "Only ever with all_windows=false: turning it on would fade the desktop of whoever runs the suite.",
+      "steps": [
+        {
+          "method": "sync_all_windows_opacity",
+          "params": { "config": { "transparency": { "all_windows": false, "all_windows_alpha": 128 } } },
+          "expect": {
+            "ok": true,
+            "result": { "running": false, "faded": 0, "enabled": false },
+            "result_types": { "available": "boolean" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "the all-windows fade refuses a parameter it does not take",
+      "steps": [
+        {
+          "method": "sync_all_windows_opacity",
+          "params": { "alpha": 128 },
+          "expect": { "ok": false, "error_type": "bad_params" }
+        }
+      ]
     }
   ]
 }

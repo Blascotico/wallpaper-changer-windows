@@ -52,10 +52,53 @@ export interface Config {
     /** Where saved collages are written. Empty means the default library folder. */
     saved_folder?: string
   }
-  display: { fit_mode: FitMode; effect: Effect }
+  display: Display
   hotkeys: Hotkeys
+  /**
+   * The all-windows fade. Declared present so the draft can be edited like any
+   * other section, but a config written before it existed has no such table —
+   * read it with `?.`.
+   */
+  transparency: {
+    all_windows?: boolean
+    /** 20..255, where 255 is fully opaque. */
+    all_windows_alpha?: number
+  }
   video: { enabled: boolean; folder: string; loop: boolean; sound: boolean }
 }
+
+/**
+ * The `[display]` table. The adjustments are integers, 0 neutral, and absent in
+ * configs that predate them.
+ */
+export interface Display {
+  fit_mode: FitMode
+  effect: Effect
+  /** -100..100 */
+  brightness?: number
+  /** -100..100 */
+  contrast?: number
+  /** -100..100 */
+  saturation?: number
+  /** -100 (cool)..100 (warm) */
+  warmth?: number
+  /** 0..100 */
+  blur?: number
+  /** 0..100 */
+  vignette?: number
+}
+
+/** The six picture adjustments: their `[display]` key and range. */
+export const ADJUSTMENTS = [
+  { key: "brightness", min: -100, max: 100 },
+  { key: "contrast", min: -100, max: 100 },
+  { key: "saturation", min: -100, max: 100 },
+  { key: "warmth", min: -100, max: 100 },
+  { key: "blur", min: 0, max: 100 },
+  { key: "vignette", min: 0, max: 100 },
+] as const satisfies readonly { key: keyof Display; min: number; max: number }[]
+
+export type AdjustmentKey = (typeof ADJUSTMENTS)[number]["key"]
 
 /**
  * The `[hotkeys]` table.
@@ -94,6 +137,18 @@ export interface ScrollTransparencyStatus {
   modifier: ScrollModifier
   modifiers: ScrollModifier[]
   step: number
+}
+
+export interface AllWindowsOpacityStatus {
+  /** What the settings ask for. */
+  enabled: boolean
+  /** Whether the window hook is actually installed. */
+  running: boolean
+  available: boolean
+  /** The alpha being applied, while running. */
+  alpha: number | null
+  /** How many windows are faded right now. */
+  faded: number
 }
 
 /**
@@ -305,6 +360,15 @@ export const engine = {
     call<ScrollTransparencyStatus>("scroll_transparency_status"),
   /** Re-read the saved settings and install or remove the hook to match. */
   syncScrollTransparency: () => call<ScrollTransparencyStatus>("sync_scroll_transparency"),
+
+  allWindowsOpacityStatus: () =>
+    call<AllWindowsOpacityStatus>("all_windows_opacity_status"),
+  /**
+   * Match the all-windows fade to the settings. With a draft, the unsaved values are
+   * applied to the real desktop without being written — the slider's live preview.
+   */
+  syncAllWindowsOpacity: (config?: Partial<Config>) =>
+    call<AllWindowsOpacityStatus>("sync_all_windows_opacity", { config }),
 
   scanVideos: (folder: string) => call<{ count: number; videos: string[] }>("scan_videos", { folder }),
   videoStart: (config?: Partial<Config>) => call<VideoStatus>("video_start", { config }),

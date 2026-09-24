@@ -46,6 +46,7 @@ use std::sync::{Arc, Mutex, OnceLock};
 
 use serde_json::{json, Value};
 
+use crate::adjust::Adjustments;
 use crate::monitor::Monitor;
 use crate::{config, monitor, workerw, CoreError, EventSink};
 
@@ -327,6 +328,7 @@ impl Instance {
         videos: &[PathBuf],
         loop_playlist: bool,
         audio: bool,
+        picture: &Adjustments,
     ) -> Result<Self, String> {
         let handle = unsafe { (lib.create)() };
         if handle.is_null() {
@@ -354,6 +356,9 @@ impl Instance {
             options.push(("osc".to_string(), "no".to_string()));
             options.push(("input-default-bindings".to_string(), "no".to_string()));
             options.push(("input-vo-keyboard".to_string(), "no".to_string()));
+            for (name, value) in picture_properties(picture) {
+                options.push((name.to_string(), value.to_string()));
+            }
 
             for (name, value) in &options {
                 let code = unsafe {
@@ -461,6 +466,21 @@ impl Instance {
                 cstring(name).as_ptr(),
                 MPV_FORMAT_FLAG,
                 &mut flag as *mut i32 as *mut _,
+            )
+        };
+        if code < 0 {
+            log::debug!("mpv could not set {name}: {}", self.lib.error_text(code));
+        }
+    }
+
+    fn set_int(&self, name: &str, value: i64) {
+        let mut value = value;
+        let code = unsafe {
+            (self.lib.set_property)(
+                self.handle,
+                cstring(name).as_ptr(),
+                MPV_FORMAT_INT64,
+                &mut value as *mut i64 as *mut _,
             )
         };
         if code < 0 {
@@ -601,6 +621,7 @@ enum Command {
         loop_playlist: bool,
         sound: bool,
         monitors: Vec<Monitor>,
+        picture: Adjustments,
         reply: Sender<Result<(), String>>,
     },
     Stop {
@@ -612,6 +633,10 @@ enum Command {
     },
     SetSound {
         enabled: bool,
+        reply: Sender<()>,
+    },
+    SetPicture {
+        picture: Adjustments,
         reply: Sender<()>,
     },
     Status {
@@ -663,6 +688,7 @@ impl Playing {
         loop_playlist: bool,
         sound: bool,
         monitors: &[Monitor],
+        picture: &Adjustments,
     ) -> Result<(), String> {
         self.stop();
 
@@ -691,7 +717,14 @@ impl Playing {
             let Some(hwnd) = create_host_window(parent, monitor, origin) else {
                 continue;
             };
-            match Instance::create(lib, hwnd, &self.videos, loop_playlist, sound && first) {
+            match Instance::create(
+                lib,
+                hwnd,
+                &self.videos,
+                loop_playlist,
+                sound && first,
+                picture,
+            ) {
                 Ok(instance) => {
                     self.instances.push(instance);
                     first = false;
@@ -737,6 +770,29 @@ impl Playing {
             instance.set_flag("mute", !(enabled && index == 0));
         }
     }
+
+    fn set_picture(&mut self, picture: &Adjustments) {
+        for instance in &self.instances {
+            for (name, value) in picture_properties(picture) {
+                instance.set_int(name, value);
+            }
+        }
+    }
+}
+
+/// The adjustments mpv can do itself, by its own property names.
+///
+/// Only three of the six: mpv's `brightness`, `contrast` and `saturation` run in the
+/// GPU shader on the same −100..100 scale the sliders use, so they are free. Warmth,
+/// blur and vignette would each need a filter graph on a software-decoded stream
+/// (`hwdec=no` is not negotiable — see the module docs), which is a price the
+/// wallpaper would pay on every frame.
+fn picture_properties(picture: &Adjustments) -> [(&'static str, i64); 3] {
+    [
+        ("brightness", picture.brightness as i64),
+        ("contrast", picture.contrast as i64),
+        ("saturation", picture.saturation as i64),
+    ]
 }
 
 fn file_name(path: &Path) -> String {
@@ -791,12 +847,14 @@ impl VideoPlayer {
         loop_playlist: bool,
         sound: bool,
         monitors: Vec<Monitor>,
+        picture: Adjustments,
     ) -> Result<(), CoreError> {
         let outcome = self.send(|reply| Command::Start {
             videos,
             loop_playlist,
             sound,
             monitors,
+            picture,
             reply,
         });
         match outcome {
@@ -828,6 +886,11 @@ impl VideoPlayer {
         self.send(|reply| Command::SetSound { enabled, reply });
     }
 
+    /// Brightness, contrast and saturation, live on whatever is playing.
+    pub fn set_picture(&self, picture: Adjustments) {
+        self.send(|reply| Command::SetPicture { picture, reply });
+    }
+
     /// `(running, current file name)`.
     pub fn status(&self) -> (bool, String) {
         let started = self
@@ -856,11 +919,14 @@ fn run_video_thread(commands: std::sync::mpsc::Receiver<Command>, events: Arc<dy
                 loop_playlist,
                 sound,
                 monitors,
+                picture,
                 reply,
             } => {
                 let first = videos.first().map(|p| file_name(p));
                 let outcome = match library() {
-                    Some(lib) => playing.start(&lib, videos, loop_playlist, sound, &monitors),
+                    Some(lib) => {
+                        playing.start(&lib, videos, loop_playlist, sound, &monitors, &picture)
+                    }
                     None => Err("libmpv is not available.".to_string()),
                 };
                 if outcome.is_ok() {
@@ -883,6 +949,10 @@ fn run_video_thread(commands: std::sync::mpsc::Receiver<Command>, events: Arc<dy
             }
             Command::SetSound { enabled, reply } => {
                 playing.set_sound(enabled);
+                let _ = reply.send(());
+            }
+            Command::SetPicture { picture, reply } => {
+                playing.set_picture(&picture);
                 let _ = reply.send(());
             }
             Command::Status { reply } => {

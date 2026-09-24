@@ -3,7 +3,7 @@ import { open } from "@tauri-apps/plugin-dialog"
 
 import { PreviewStage } from "@/components/preview-stage"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -13,8 +13,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
-import { engine, type Config, type Effect, type FitMode, type MonitorsResult } from "@/lib/engine"
+import {
+  ADJUSTMENTS,
+  engine,
+  type Config,
+  type Effect,
+  type FitMode,
+  type MonitorsResult,
+} from "@/lib/engine"
 import type { Actions } from "@/lib/use-actions"
 import type { I18n } from "@/lib/use-i18n"
 import { usePreview } from "@/lib/use-preview"
@@ -237,6 +245,80 @@ export function WallpaperTab({ config, monitors, i18n, actions, onChange }: Prop
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("adjustments")}</CardTitle>
+          <CardAction>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={ADJUSTMENTS.every(({ key }) => (config.display[key] ?? 0) === 0)}
+              onClick={() => ADJUSTMENTS.forEach(({ key }) => onChange("display", key, 0))}
+            >
+              {t("reset_all")}
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          <p className="text-sm text-muted-foreground">{t("adjustments_hint")}</p>
+          <div className="grid gap-x-8 gap-y-4 lg:grid-cols-2">
+            {ADJUSTMENTS.map(({ key, min, max }) => (
+              <AdjustmentRow
+                key={key}
+                label={t(key)}
+                value={config.display[key] ?? 0}
+                min={min}
+                max={max}
+                onChange={(v) => onChange("display", key, v)}
+              />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+/**
+ * One adjustment: its label, a signed readout, and the slider.
+ *
+ * Double-clicking the label puts it back to 0. The preview debounces, so the
+ * slider can report every step while dragging without re-rendering on each one.
+ */
+function AdjustmentRow({
+  label,
+  value,
+  min,
+  max,
+  onChange,
+}: {
+  label: string
+  value: number
+  min: number
+  max: number
+  onChange: (value: number) => void
+}) {
+  // A signed scale reads "+20"; a 0..100 one is just "20".
+  const shown = min < 0 && value > 0 ? `+${value}` : String(value)
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <Label
+          className="cursor-default font-normal text-muted-foreground select-none"
+          onDoubleClick={() => onChange(0)}
+        >
+          {label}
+        </Label>
+        <span className="font-mono text-xs tabular-nums text-muted-foreground">{shown}</span>
+      </div>
+      <Slider
+        min={min}
+        max={max}
+        step={1}
+        value={[value]}
+        onValueChange={(v) => onChange(Array.isArray(v) ? v[0] : v)}
+      />
     </div>
   )
 }
