@@ -2,7 +2,7 @@
 name = "wallpaper-core"
 version = "6.0.0"
 edition = "2021"
-description = "Wallpaper Changer engine core: config, composition, Win32, video."
+description = "KokoroPaper engine core: config, composition, Win32, video."
 
 # Deliberately no `tauri` dependency. The core must stay testable headless, and
 # nothing in it should need an AppHandle to do its work — the shell reaches it

@@ -16,7 +16,7 @@ import { check, type Update } from "@tauri-apps/plugin-updater"
 import { toast } from "sonner"
 
 import { isTauri } from "@/lib/tauri"
-import type { Config } from "@/lib/engine"
+import { engine, type Config } from "@/lib/engine"
 
 /** A check that never answers must not leave the UI stuck on "checking". */
 const CHECK_TIMEOUT_MS = 20_000
@@ -116,7 +116,7 @@ export function useUpdate(
     setContentLength(null)
     setError(null)
     try {
-      await found.downloadAndInstall((event) => {
+      await found.download((event) => {
         if (event.event === "Started") {
           setContentLength(event.data.contentLength ?? null)
         } else if (event.event === "Progress") {
@@ -126,6 +126,13 @@ export function useUpdate(
         }
       })
       setStatus("ready")
+      // On Windows, install() hands over to the NSIS installer and ends this process
+      // with a bare exit: RunEvent::Exit never fires, so Engine::shutdown never runs.
+      // Without this, every window the all-windows fade touched would stay faded, and
+      // the relaunched app would take that fade for the window's own opacity and
+      // "restore" it to that on quit. A failure here must not block the update.
+      await engine.shutdown().catch(() => {})
+      await found.install()
       // On Windows the NSIS installer takes over and this process is gone before the
       // call returns; the button in the dialog is the fallback for when it is not.
       await relaunch()

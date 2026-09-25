@@ -5,10 +5,10 @@
 //! ## This is not the entry the app actually uses
 //!
 //! The shipping app registers autostart through `tauri-plugin-autostart`, which
-//! writes the `Run` value **`Wallpaper Changer`** (with a space, from `productName`)
-//! pointing at `tauri-native.exe --minimized`. This module reads and writes
-//! **`WallpaperChanger`** (no space), which is a *different* value under the same
-//! key.
+//! writes the `Run` value named after `productName` — **`KokoroPaper`** since 6.0.0,
+//! `Wallpaper Changer` before it — pointing at the executable with `--minimized`.
+//! This module reads and writes **`WallpaperChanger`**, which is a *different* value
+//! under the same key.
 //!
 //! Two consequences, both inherited rather than introduced:
 //!

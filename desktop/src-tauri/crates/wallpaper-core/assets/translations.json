@@ -7,7 +7,7 @@
   "default": "en",
   "translations": {
     "en": {
-      "window_title": "WallpaperChanger",
+      "window_title": "KokoroPaper",
       "header_subtitle": "Control Panel  |  Windows",
       "detecting": "detecting...",
       "tab_wallpaper": "Wallpaper",
@@ -291,7 +291,7 @@
       "hotkeys_unavailable": "Some hotkeys are already in use"
     },
     "pt_BR": {
-      "window_title": "WallpaperChanger",
+      "window_title": "KokoroPaper",
       "header_subtitle": "Painel de controle  |  Windows",
       "detecting": "detectando...",
       "tab_wallpaper": "Wallpaper",
@@ -575,7 +575,7 @@
       "hotkeys_unavailable": "Alguns atalhos já estão em uso"
     },
     "ja": {
-      "window_title": "WallpaperChanger",
+      "window_title": "KokoroPaper",
       "header_subtitle": "コントロールパネル  |  Windows",
       "detecting": "検出中...",
       "tab_wallpaper": "壁紙",

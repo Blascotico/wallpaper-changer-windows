@@ -1,6 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Wallpaper Changer",
+  "productName": "KokoroPaper",
+  "mainBinaryName": "KokoroPaper",
   "version": "6.0.0",
   "identifier": "com.klysman.wallpaperchanger",
   "build": {
@@ -14,7 +15,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Wallpaper Changer",
+        "title": "KokoroPaper",
         "width": 1400,
         "height": 918,
         "center": true,
@@ -31,6 +32,11 @@
     "targets": [
       "nsis"
     ],
+    "windows": {
+      "nsis": {
+        "installerHooks": "./windows/hooks.nsh"
+      }
+    },
     "createUpdaterArtifacts": true,
     "resources": {
       "../../libmpv/libmpv-2.dll": "libmpv/libmpv-2.dll"

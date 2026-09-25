@@ -49,7 +49,7 @@ pub fn build<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<()> {
     }
 
     builder
-        .tooltip("Wallpaper Changer")
+        .tooltip("KokoroPaper")
         .menu(&menu)
         // Left click should open the window; without this the icon only responds
         // to the menu, which people reliably find confusing.

@@ -51,7 +51,7 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="flex max-w-xl flex-col gap-3 rounded-lg border border-destructive/50 p-5">
           <h2 className="font-medium">The interface stopped responding</h2>
           <p className="text-sm text-muted-foreground">
-            Wallpaper Changer is still running in the tray — your wallpaper and hotkeys
+            KokoroPaper is still running in the tray — your wallpaper and hotkeys
             are unaffected. Reloading rebuilds the window.
           </p>
           <p className="rounded bg-muted px-2 py-1 font-mono text-xs break-words">

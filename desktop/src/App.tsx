@@ -182,7 +182,7 @@ export function App() {
             />
             {/* Hidden when collapsed to icon width. */}
             <div className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
-              <span className="truncate text-sm font-medium">Wallpaper Changer</span>
+              <span className="truncate text-sm font-medium">KokoroPaper</span>
               <span className="truncate text-xs text-muted-foreground">
                 {monitors
                   ? `${monitors.monitors.length} ${t("monitors")} · ${monitors.virtual_width}×${monitors.virtual_height}`

@@ -117,7 +117,7 @@ try {
     if ($NoBundle) {
         Write-Host '==> Building the app (debug, no installers)' -ForegroundColor Cyan
         Invoke-Native { bun run tauri build --debug --no-bundle } 'tauri build'
-        Write-Host "==> Done: $desktop\src-tauri\target\debug\tauri-native.exe" -ForegroundColor Green
+        Write-Host "==> Done: the debug executable is in $desktop\src-tauri\target\debug" -ForegroundColor Green
         return
     }
 

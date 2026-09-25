@@ -382,6 +382,13 @@ export const engine = {
   setStartupEnabled: (enabled: boolean) => call<{ enabled: boolean }>("set_startup_enabled", { enabled }),
 
   notify: (title: string, message: string) => call<{ sent: boolean }>("notify", { title, message }),
+
+  /**
+   * Stop the rotation timer, both system-wide hooks and the video, and put every
+   * window the all-windows fade touched back how it was. What quitting does — for
+   * the one exit that never reaches the shell's own shutdown: the updater's.
+   */
+  shutdown: () => call<{ bye: boolean }>("shutdown"),
 }
 
 // ── Native shell (Tauri-side, not the engine) ─────────────────────────────────
