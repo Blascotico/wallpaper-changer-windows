@@ -5,29 +5,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
-    content="WallpaperChanger — The modern multi-monitor collage and live video wallpaper manager for Windows 10 and 11. Built with Tauri v2, React 19, and shadcn/ui." />
+    content="KokoroPaper (formerly WallpaperChanger) — multi-monitor collage and live video wallpapers for Windows 10 and 11, with picture adjustments and one opacity for every window. Free and open-source." />
   <meta name="keywords"
-    content="wallpaper manager, windows wallpaper, multi-monitor wallpaper, collage wallpaper, video wallpaper, live wallpaper, animated wallpaper, dual monitor wallpaper, free wallpaper app, open-source wallpaper, tauri, shadcn ui" />
+    content="KokoroPaper, wallpaper manager, windows wallpaper, multi-monitor wallpaper, collage wallpaper, video wallpaper, live wallpaper, window transparency, dual monitor wallpaper, free wallpaper app, open-source wallpaper, WallpaperChanger" />
   <link rel="canonical" href="https://wallpaper.astrofocus.app/" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://wallpaper.astrofocus.app/" />
-  <meta property="og:site_name" content="WallpaperChanger" />
-  <meta property="og:title" content="WallpaperChanger — Multi-Monitor Wallpaper Manager for Windows" />
+  <meta property="og:site_name" content="KokoroPaper" />
+  <meta property="og:title" content="KokoroPaper — Multi-Monitor Wallpapers for Windows" />
   <meta property="og:description"
-    content="Multi-monitor collage & live video wallpaper manager. Free, open-source, MIT licensed. Built with Tauri v2 and shadcn/ui." />
-  <meta property="og:image" content="https://wallpaper.astrofocus.app/wallpaper-changer-hero.png" />
+    content="Collage and live video wallpapers for every monitor, with picture adjustments and one opacity for every window. Free, open-source, MIT licensed." />
+  <meta property="og:image" content="https://wallpaper.astrofocus.app/kokoropaper-hero.png" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://wallpaper.astrofocus.app/" />
-  <meta name="twitter:title" content="WallpaperChanger for Windows" />
+  <meta name="twitter:title" content="KokoroPaper for Windows" />
   <meta name="twitter:description"
-    content="Multi-monitor collage & live video wallpaper manager. Free, open-source, MIT licensed." />
-  <meta name="twitter:image" content="https://wallpaper.astrofocus.app/wallpaper-changer-hero.png" />
+    content="Collage and live video wallpapers for every monitor. Free, open-source, MIT licensed." />
+  <meta name="twitter:image" content="https://wallpaper.astrofocus.app/kokoropaper-hero.png" />
 
-  <title>WallpaperChanger — Multi-Monitor Wallpaper Manager for Windows</title>
+  <title>KokoroPaper — Multi-Monitor Wallpapers for Windows</title>
 
   <!-- Prevent theme flicker before paint -->
   <script>
@@ -48,7 +48,8 @@
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "WallpaperChanger",
+    "name": "KokoroPaper",
+    "alternateName": "WallpaperChanger",
     "operatingSystem": "Windows 10, Windows 11",
     "applicationCategory": "UtilitiesApplication",
     "offers": {
@@ -56,9 +57,9 @@
       "price": "0",
       "priceCurrency": "USD"
     },
-    "description": "Multi-monitor collage & live video wallpaper manager. Free, open-source, MIT licensed.",
+    "description": "Multi-monitor collage and live video wallpapers, with picture adjustments and one opacity for every window. Free, open-source, MIT licensed.",
     "url": "https://wallpaper.astrofocus.app/",
-    "softwareVersion": "5.1",
+    "softwareVersion": "6.0",
     "downloadUrl": "https://github.com/klysman08/wallpaper-changer-windows/releases",
     "license": "https://opensource.org/licenses/MIT"
   }
@@ -79,8 +80,8 @@
   <header id="navbar">
     <div class="container nav-inner">
       <a href="#" class="nav-logo">
-        <img src="icon.png" alt="WallpaperChanger Icon" class="nav-logo-icon" />
-        <span>WallpaperChanger</span>
+        <img src="icon.png" alt="KokoroPaper icon" class="nav-logo-icon" />
+        <span>KokoroPaper</span>
       </a>
 
       <ul class="nav-links">
@@ -175,8 +176,8 @@
         <!-- Left Column: Content & Actions -->
         <div class="hero-content-col">
           <a href="https://github.com/klysman08/wallpaper-changer-windows/releases" class="hero-badge-link" target="_blank" rel="noopener">
-            <span class="badge badge-primary">v6.0 Release</span>
-            <span>Rebuilt on Tauri v2 &amp; shadcn/ui</span>
+            <span class="badge badge-primary">v6.0</span>
+            <span>WallpaperChanger is now KokoroPaper</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12h14"></path>
               <path d="m12 5 7 7-7 7"></path>
@@ -189,7 +190,7 @@
           </h1>
 
           <p class="hero-subtitle">
-            Multi-monitor collage mode, <strong>live video wallpapers</strong> via libmpv, zoomable live preview, auto-rotation, global hotkeys, and system tray — completely free and open-source.
+            <strong>KokoroPaper</strong> gives every monitor its own collage or a <strong>live video wallpaper</strong>. Tune the picture with six sliders, fade every window to one opacity, and rotate on a timer. Completely free and open-source.
           </p>
 
           <div class="hero-actions">
@@ -235,8 +236,8 @@
 
           <div class="hero-highlights-row">
             <div class="hero-highlight-card">
-              <span class="hero-highlight-val">30 FPS</span>
-              <span class="hero-highlight-lbl">Smooth Fade Crossfade</span>
+              <span class="hero-highlight-val">6 Sliders</span>
+              <span class="hero-highlight-lbl">Brightness to Vignette</span>
             </div>
             <div class="hero-highlight-card">
               <span class="hero-highlight-val">1–8 Grid</span>
@@ -258,7 +259,7 @@
                 <div class="mockup-window-dots">
                   <span></span><span></span><span></span>
                 </div>
-                <span class="mockup-window-title">Wallpaper Changer — v6.0.0</span>
+                <span class="mockup-window-title">KokoroPaper — v6.0.0</span>
               </div>
               <div class="mockup-window-actions">
                 <span>🗕</span>
@@ -273,9 +274,9 @@
               <aside class="mockup-sidebar">
                 <div>
                   <div class="mockup-sidebar-header">
-                    <img src="icon.png" alt="WallpaperChanger Icon" />
+                    <img src="icon.png" alt="KokoroPaper icon" />
                     <div class="mockup-sidebar-meta">
-                      <span class="mockup-sidebar-title">Wallpaper Changer</span>
+                      <span class="mockup-sidebar-title">KokoroPaper</span>
                       <span class="mockup-sidebar-subtitle">3 Monitors · 6400×1440</span>
                     </div>
                   </div>
@@ -395,7 +396,7 @@
                               <div class="stage-collage-cell" data-slot="7"><img src="images/example 1 (2).jpeg" alt="7" class="stage-cell-img fit-fill" /><span class="stage-cell-badge">7</span></div>
                               <div class="stage-collage-cell" data-slot="8"><img src="images/example 1 (3).jpeg" alt="8" class="stage-cell-img fit-fill" /><span class="stage-cell-badge">8</span></div>
                             </div>
-                            <span class="stage-monitor-label">#2 (Primary) · 2560×1440</span>
+                            <span class="stage-monitor-label">#2 · 2560×1440</span>
                             <div class="stage-monitor-footer"><span class="mini-dot"></span><span class="mini-dot"></span><span class="mini-dot"></span></div>
                           </div>
                           <!-- Monitor 3: 1920x1080 (16:9) -->
@@ -427,6 +428,28 @@
                             <img src="images/example 1 (4).jpg" alt="Thumb 4" class="mockup-stage-thumb" />
                           </div>
                         </div>
+                      </div>
+                    </div>
+
+                    <!-- Adjustments Card (new in 6.0) -->
+                    <div class="mockup-card" data-adjust-for="mockupStage">
+                      <div class="mockup-card-header">
+                        <span class="mockup-card-title">
+                          Adjustments
+                          <span class="badge badge-new">New</span>
+                        </span>
+                        <button class="btn btn-outline btn-xs mock-adjust-reset">Reset all</button>
+                      </div>
+                      <div class="mockup-card-content">
+                        <div class="mockup-adjust-list">
+                          <label class="mockup-adjust-row"><span class="mockup-adjust-head">Brightness <output>0</output></span><input type="range" class="mockup-range" data-adjust="brightness" min="-100" max="100" value="0" /></label>
+                          <label class="mockup-adjust-row"><span class="mockup-adjust-head">Contrast <output>0</output></span><input type="range" class="mockup-range" data-adjust="contrast" min="-100" max="100" value="0" /></label>
+                          <label class="mockup-adjust-row"><span class="mockup-adjust-head">Saturation <output>0</output></span><input type="range" class="mockup-range" data-adjust="saturation" min="-100" max="100" value="0" /></label>
+                          <label class="mockup-adjust-row"><span class="mockup-adjust-head">Warmth <output>0</output></span><input type="range" class="mockup-range" data-adjust="warmth" min="-100" max="100" value="0" /></label>
+                          <label class="mockup-adjust-row"><span class="mockup-adjust-head">Blur <output>0</output></span><input type="range" class="mockup-range" data-adjust="blur" min="0" max="100" value="0" /></label>
+                          <label class="mockup-adjust-row"><span class="mockup-adjust-head">Vignette <output>0</output></span><input type="range" class="mockup-range" data-adjust="vignette" min="0" max="100" value="0" /></label>
+                        </div>
+                        <p class="mockup-hint">Double-click a label to reset it. Blur and vignette apply to still wallpapers; the rest reach the video wallpaper too.</p>
                       </div>
                     </div>
 
@@ -526,6 +549,7 @@
                         </div>
                       </div>
                     </div>
+
                   </div>
 
                   <!-- 2. GALLERY TAB PANEL (desktop/src/components/gallery-tab.tsx) -->
@@ -540,7 +564,7 @@
                       </div>
                       <div class="mockup-card-content">
                         <div class="mockup-input-row">
-                          <input type="text" class="mockup-input" value="%APPDATA%\WallpaperChanger\saved" readonly spellcheck="false" />
+                          <input type="text" class="mockup-input" value="%LOCALAPPDATA%\WallpaperChanger\saved" readonly spellcheck="false" />
                           <button class="btn btn-outline btn-xs" style="height: 2rem; padding: 0 0.625rem;">Browse</button>
                         </div>
 
@@ -646,6 +670,33 @@
 
                   <!-- 4. TRANSPARENCY TAB PANEL (desktop/src/components/transparency-tab.tsx) -->
                   <div class="mockup-tab-panel" id="mock-panel-transparency">
+                    <!-- All Windows Card (new in 6.0) -->
+                    <div class="mockup-card">
+                      <div class="mockup-card-header">
+                        <span class="mockup-card-title">
+                          All windows
+                          <span class="badge badge-new">New</span>
+                        </span>
+                        <label class="mockup-switch">
+                          <input type="checkbox" id="mockAllWinSwitch" checked />
+                          <span class="mockup-slider"></span>
+                        </label>
+                      </div>
+                      <div class="mockup-card-content">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
+                          <span>Opacity for every window</span>
+                          <strong id="mockAllWinVal" style="font-family: var(--font-mono);">70%</strong>
+                        </div>
+                        <input type="range" class="mockup-range" min="8" max="100" value="70" id="mockAllWinSlider" />
+                        <div class="mockup-allwin-preview" id="mockAllWinPreview" style="background-image: url('images/example 1 (2).jpg');">
+                          <div class="fake-win" style="left: 6%; top: 12%; width: 42%; height: 70%;"><div class="fake-win-bar">Explorer</div><div class="fake-win-lines"><i></i><i style="width: 70%;"></i><i></i><i style="width: 50%;"></i></div></div>
+                          <div class="fake-win" style="left: 38%; top: 30%; width: 34%; height: 60%;"><div class="fake-win-bar">Notepad</div><div class="fake-win-lines"><i style="width: 80%;"></i><i></i><i style="width: 60%;"></i></div></div>
+                          <div class="fake-win" style="left: 66%; top: 8%; width: 28%; height: 52%;"><div class="fake-win-bar">Settings</div><div class="fake-win-lines"><i></i><i style="width: 40%;"></i></div></div>
+                        </div>
+                        <p class="mockup-hint">Open windows fade now, new ones as they appear. It comes back after a restart while Start with Windows is on, and quitting puts every window back.</p>
+                      </div>
+                    </div>
+
                     <!-- Scroll Transparency Card -->
                     <div class="mockup-card">
                       <div class="mockup-card-header">
@@ -825,21 +876,18 @@
                       </div>
                     </div>
 
-                    <!-- Display & Transitions Card -->
+                    <!-- About & Updates Card -->
                     <div class="mockup-card">
                       <div class="mockup-card-header">
-                        <span class="mockup-card-title">Display &amp; Transitions</span>
+                        <span class="mockup-card-title">About</span>
                       </div>
                       <div class="mockup-card-content">
                         <div class="mockup-switch-row">
                           <div>
-                            <div>Crossfade transition</div>
-                            <div style="font-size: 0.6875rem; color: var(--muted-foreground);">30 FPS GDI WorkerW transition</div>
+                            <div>KokoroPaper 6.0.0</div>
+                            <div style="font-size: 0.6875rem; color: var(--muted-foreground);">Formerly WallpaperChanger · MIT licensed</div>
                           </div>
-                          <label class="mockup-switch">
-                            <input type="checkbox" checked />
-                            <span class="mockup-slider"></span>
-                          </label>
+                          <button class="btn btn-outline btn-xs">Check for updates</button>
                         </div>
                       </div>
                     </div>
@@ -885,11 +933,11 @@
     </div>
   </section>
 
-  <!-- ─── WHY SECTION (COMPARISON TABLE + SHOWCASE BANNER) ─── -->
+  <!-- ─── WHY SECTION (COMPARISON TABLE + DESK SCENE) ─── -->
   <section id="why">
     <div class="container">
       <div class="section-header">
-        <span class="section-label">Why WallpaperChanger</span>
+        <span class="section-label">Why KokoroPaper</span>
         <h2 class="section-title">Everything others charge for. <span class="gradient-text">Free.</span></h2>
         <p class="section-sub">Free and open-source with zero bloat, telemetry, or paywalls.</p>
       </div>
@@ -901,72 +949,73 @@
             <thead>
               <tr>
                 <th>Problem with other apps</th>
-                <th>WallpaperChanger solution</th>
+                <th>KokoroPaper</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>
-                  <span class="status-icon bad">✕</span> Single image stretched across all screens
-                </td>
-                <td>
-                  <span class="status-icon good">✓</span> <strong>Collage mode</strong> — 1 to 8 images dynamically composed per monitor
-                </td>
+                <td><span class="status-icon bad">✕</span> Single image stretched across all screens</td>
+                <td><span class="status-icon good">✓</span> <strong>Collage mode</strong> — 1 to 8 images composed per monitor</td>
               </tr>
               <tr>
-                <td>
-                  <span class="status-icon bad">✕</span> Live / animated wallpapers behind paywalls
-                </td>
-                <td>
-                  <span class="status-icon good">✓</span> <strong>Hardware-accelerated video wallpapers</strong> via libmpv for free
-                </td>
+                <td><span class="status-icon bad">✕</span> Wallpapers too bright or busy behind your icons</td>
+                <td><span class="status-icon good">✓</span> <strong>Picture adjustments</strong> — brightness, contrast, saturation, warmth, blur, vignette</td>
               </tr>
               <tr>
-                <td>
-                  <span class="status-icon bad">✕</span> Poor multi-monitor DPI scaling
-                </td>
-                <td>
-                  <span class="status-icon good">✓</span> Precise virtual desktop detection respecting monitor resolutions and offsets
-                </td>
+                <td><span class="status-icon bad">✕</span> Live / animated wallpapers behind paywalls</td>
+                <td><span class="status-icon good">✓</span> <strong>Video wallpapers</strong> via libmpv, for free</td>
               </tr>
               <tr>
-                <td>
-                  <span class="status-icon bad">✕</span> Abrupt, jarring wallpaper cuts
-                </td>
-                <td>
-                  <span class="status-icon good">✓</span> <strong>Smooth 30 fps crossfade transition</strong> using GDI WorkerW rendering
-                </td>
+                <td><span class="status-icon bad">✕</span> Transparency one window at a time, gone when it closes</td>
+                <td><span class="status-icon good">✓</span> <strong>One opacity for every window</strong> — including new ones, and after a restart</td>
               </tr>
               <tr>
-                <td>
-                  <span class="status-icon bad">✕</span> Heavy Electron memory footprints (500MB+)
-                </td>
-                <td>
-                  <span class="status-icon good">✓</span> <strong>Lightweight Tauri v2 shell</strong> using the native WebView, with the engine compiled in
-                </td>
+                <td><span class="status-icon bad">✕</span> Poor multi-monitor layouts and offsets</td>
+                <td><span class="status-icon good">✓</span> Virtual desktop detection that respects each monitor's resolution and position</td>
               </tr>
               <tr>
-                <td>
-                  <span class="status-icon bad">✕</span> Forgets active state on reboot
-                </td>
-                <td>
-                  <span class="status-icon good">✓</span> <strong>Instant session resume</strong> — rotation and video playback persist seamlessly
-                </td>
+                <td><span class="status-icon bad">✕</span> Heavy Electron memory footprints (500MB+)</td>
+                <td><span class="status-icon good">✓</span> <strong>Lightweight Tauri v2 shell</strong> on the native WebView, with the engine compiled in</td>
+              </tr>
+              <tr>
+                <td><span class="status-icon bad">✕</span> Forgets active state on reboot</td>
+                <td><span class="status-icon good">✓</span> <strong>Session resume</strong> — rotation and video playback come back on their own</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <!-- Banner Showcase Column -->
+        <!-- Desk Scene Showcase Column -->
         <div class="why-banner-wrap">
           <div class="why-banner-header">
             <div class="why-banner-title">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
-              <span>Multi-Monitor Collage &amp; Live Video</span>
+              <span>Three monitors, one desktop</span>
             </div>
-            <span class="badge badge-secondary">Desktop Composition</span>
+            <span class="badge badge-secondary">Collage + all windows</span>
           </div>
-          <img src="wallpaper-changer-hero.png" alt="WallpaperChanger managing collage and live video wallpapers across three monitors" class="why-banner-img" />
+          <div class="desk-scene" role="img" aria-label="Three monitors, each showing its own four-picture collage with a warm tint and a vignette, and two application windows faded so the wallpaper shows through">
+            <div class="desk-monitors">
+              <div class="desk-monitor side">
+                <div class="desk-screen"><div class="desk-collage"><img src="images/example 1 (1).jpg" alt="" loading="lazy" /><img src="images/example 1 (2).jpg" alt="" loading="lazy" /><img src="images/example 1 (3).jpg" alt="" loading="lazy" /><img src="images/example 1 (4).jpg" alt="" loading="lazy" /></div></div>
+                <div class="desk-neck"></div><div class="desk-foot"></div>
+              </div>
+              <div class="desk-monitor main">
+                <div class="desk-screen"><div class="desk-collage"><img src="images/example 1 (5).jpg" alt="" loading="lazy" /><img src="images/example 1 (1).jpeg" alt="" loading="lazy" /><img src="images/example 1 (2).jpeg" alt="" loading="lazy" /><img src="images/example 1 (3).jpeg" alt="" loading="lazy" /></div><div class="fake-win desk-window"><div class="fake-win-bar">Explorer</div><div class="fake-win-lines"><i style="width: 100%;"></i><i style="width: 70%;"></i><i style="width: 100%;"></i><i style="width: 55%;"></i><i style="width: 85%;"></i></div></div><div class="fake-win desk-window small"><div class="fake-win-bar">Notepad</div><div class="fake-win-lines"><i style="width: 80%;"></i><i style="width: 100%;"></i><i style="width: 60%;"></i></div></div></div>
+                <div class="desk-neck"></div><div class="desk-foot"></div>
+              </div>
+              <div class="desk-monitor side">
+                <div class="desk-screen"><div class="desk-collage"><img src="images/example 1 (4).jpeg" alt="" loading="lazy" /><img src="images/example 1 (5).jpeg" alt="" loading="lazy" /><img src="images/example 1 (1).jpg" alt="" loading="lazy" /><img src="images/example 1 (2).jpg" alt="" loading="lazy" /></div></div>
+                <div class="desk-neck"></div><div class="desk-foot"></div>
+              </div>
+            </div>
+            <div class="desk-legend">
+              <span>4 images per monitor</span>
+              <span>Warmth +35</span>
+              <span>Vignette 45</span>
+              <span>All windows · 62%</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -982,112 +1031,100 @@
       </div>
 
       <div class="features-grid">
-        <!-- 1. Live Preview -->
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg>
+          </div>
+          <h3 class="feature-title">Picture Adjustments <span class="badge badge-new">New</span></h3>
+          <p class="feature-desc">Brightness, contrast, saturation, warmth, blur, and vignette for the whole collage. Blur and vignette are sized per monitor, so they never cross a seam.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.9a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg>
+          </div>
+          <h3 class="feature-title">One Opacity for Every Window <span class="badge badge-new">New</span></h3>
+          <p class="feature-desc">Fade every window to the same opacity: the ones open now and every one opened later. It comes back after a restart, and quitting restores them all.</p>
+        </div>
+
         <div class="feature-card">
           <div class="feature-icon-box">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg>
           </div>
-          <h3 class="feature-title">Live Scaled Preview</h3>
-          <p class="feature-desc">See the exact composite before applying. Zoom into individual displays, shuffle candidates, and apply with a single click.</p>
+          <h3 class="feature-title">Live, Editable Preview</h3>
+          <p class="feature-desc">See the exact composite before applying. Zoom into one display, drag a picture onto another to swap them, or click one to pick a different image.</p>
         </div>
 
-        <!-- 2. Video Wallpaper -->
-        <div class="feature-card">
-          <div class="feature-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/></svg>
-          </div>
-          <h3 class="feature-title">Video Wallpaper (libmpv)</h3>
-          <p class="feature-desc">Play MP4, MKV, WebM, or MOV videos behind your icons. GPU-accelerated, aspect-correct, with optional audio support.</p>
-        </div>
-
-        <!-- 3. Collage Grid -->
         <div class="feature-card">
           <div class="feature-icon-box">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
           </div>
           <h3 class="feature-title">Collage Grid (1–8 Images)</h3>
-          <p class="feature-desc">Dynamic multi-image composition per monitor. Automatic grid calculation for portrait, landscape, and ultrawide screens.</p>
+          <p class="feature-desc">Multi-image composition per monitor, with the grid worked out for portrait, landscape, and ultrawide screens.</p>
         </div>
 
-        <!-- 4. Multi-Monitor -->
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/></svg>
+          </div>
+          <h3 class="feature-title">Video Wallpaper (libmpv)</h3>
+          <p class="feature-desc">Play MP4, MKV, WebM, or MOV behind your icons. Aspect-correct, with optional sound, and brightness, contrast, and saturation applied live.</p>
+        </div>
+
         <div class="feature-card">
           <div class="feature-icon-box">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
           </div>
           <h3 class="feature-title">Multi-Monitor Aware</h3>
-          <p class="feature-desc">Automatically enumerates all connected monitors, respecting individual resolutions, scale factors, and physical arrangements.</p>
+          <p class="feature-desc">Finds every connected monitor and respects each one's resolution and position on the virtual desktop.</p>
         </div>
 
-        <!-- 5. Auto Rotation -->
         <div class="feature-card">
           <div class="feature-icon-box">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
           </div>
           <h3 class="feature-title">Background Auto-Rotation</h3>
-          <p class="feature-desc">Set custom intervals to cycle wallpapers continuously in the background, even when the main app window is closed.</p>
+          <p class="feature-desc">Cycle wallpapers on a timer, at random or newest first, even with the window closed. Newest-first stays quick in folders of thousands.</p>
         </div>
 
-        <!-- 6. Fade Transitions -->
         <div class="feature-card">
           <div class="feature-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 22H4a2 2 0 0 1-2-2V6"/><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18"/><circle cx="12" cy="8" r="2"/><rect width="16" height="16" x="6" y="2" rx="2"/></svg>
           </div>
-          <h3 class="feature-title">30 FPS Fade Transitions</h3>
-          <p class="feature-desc">Smooth crossfade transitions rendered into the Windows WorkerW desktop layer with zero flicker or desktop icon stutter.</p>
+          <h3 class="feature-title">Save &amp; Gallery</h3>
+          <p class="feature-desc">Keep any collage as an image, for the whole desktop or one monitor, and put it back on the desktop from the Gallery whenever you like.</p>
         </div>
 
-        <!-- 7. Global Hotkeys -->
         <div class="feature-card">
           <div class="feature-icon-box">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
           </div>
-          <h3 class="feature-title">Global Shortcuts (Rust-Owned)</h3>
-          <p class="feature-desc">Next, Prev, Watch toggle, and video controls. Hotkeys are managed by Rust to survive engine restarts without conflicts.</p>
+          <h3 class="feature-title">Global Shortcuts</h3>
+          <p class="feature-desc">Next, previous, rotation, effects, and video controls. Nothing is bound out of the box, so no shortcut is taken from your other apps.</p>
         </div>
 
-        <!-- 8. Window Transparency -->
         <div class="feature-card">
           <div class="feature-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.9a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m9 15 2 2 4-4"/></svg>
           </div>
-          <h3 class="feature-title">Window Transparency</h3>
-          <p class="feature-desc">Fade and adjust opacity of any focused window on the fly using configurable Modifier + Mouse Scroll.</p>
+          <h3 class="feature-title">Reads What It Can, Names What It Can't</h3>
+          <p class="feature-desc">Formats are recognised by content, not extension. Files it cannot decode (HEIC, AVIF, RAW) are counted and named, never silently dropped.</p>
         </div>
 
-        <!-- 9. Multi-Language -->
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77.04"/></svg>
+          </div>
+          <h3 class="feature-title">Start with Windows, Resume</h3>
+          <p class="feature-desc">Starts quietly into the tray, and brings rotation, the video wallpaper, and the all-windows opacity back where you left them.</p>
+        </div>
+
         <div class="feature-card">
           <div class="feature-icon-box">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           </div>
           <h3 class="feature-title">Multi-Language Support</h3>
-          <p class="feature-desc">Full internationalization support with English, Português (Brasil), and 日本語 built-in.</p>
-        </div>
-
-        <!-- 10. Start with Windows -->
-        <div class="feature-card">
-          <div class="feature-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="m8 17 4-4 4 4"/><path d="M12 13v9"/></svg>
-          </div>
-          <h3 class="feature-title">Start with Windows</h3>
-          <p class="feature-desc">Launches silently into the system tray on startup with zero windows or popups in your workflow.</p>
-        </div>
-
-        <!-- 11. Resumes Session -->
-        <div class="feature-card">
-          <div class="feature-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          </div>
-          <h3 class="feature-title">Instant Session Resume</h3>
-          <p class="feature-desc">Rotation and video wallpapers resume instantly upon app launch, preserving your previous desktop configuration.</p>
-        </div>
-
-        <!-- 12. Native Tauri Shell -->
-        <div class="feature-card">
-          <div class="feature-icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-          </div>
-          <h3 class="feature-title">Native Tauri v2 + React 19</h3>
-          <p class="feature-desc">Super lightweight architecture with near-instant boot times and minimal memory consumption.</p>
+          <p class="feature-desc">English, Português (Brasil), and 日本語 built in.</p>
         </div>
       </div>
     </div>
@@ -1117,7 +1154,7 @@
           <div class="mockup-titlebar">
             <div class="mockup-titlebar-left">
               <div class="mockup-window-dots"><span></span><span></span><span></span></div>
-              <span class="mockup-window-title">Wallpaper Changer — Live Preview</span>
+              <span class="mockup-window-title">KokoroPaper — Live Preview</span>
             </div>
             <div class="mockup-window-actions"><span>🗕</span><span>🗖</span><span>✕</span></div>
           </div>
@@ -1150,7 +1187,7 @@
                       <div class="stage-collage-cell" data-slot="7"><img src="images/example 1 (2).jpeg" alt="7" class="stage-cell-img fit-fill" /><span class="stage-cell-badge">7</span></div>
                       <div class="stage-collage-cell" data-slot="8"><img src="images/example 1 (3).jpeg" alt="8" class="stage-cell-img fit-fill" /><span class="stage-cell-badge">8</span></div>
                     </div>
-                    <span class="stage-monitor-label">#2 (Primary) · 2560×1440</span>
+                    <span class="stage-monitor-label">#2 · 2560×1440</span>
                     <div class="stage-monitor-footer">
                       <span class="mini-dot"></span><span class="mini-dot"></span><span class="mini-dot"></span>
                     </div>
@@ -1256,6 +1293,23 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="mockup-card" data-adjust-for="previewTabStage" style="margin-top: 0.75rem;">
+                  <div class="mockup-card-header">
+                    <span class="mockup-card-title">Adjustments <span class="badge badge-new">New</span></span>
+                    <button class="btn btn-outline btn-xs mock-adjust-reset">Reset all</button>
+                  </div>
+                  <div class="mockup-card-content">
+                    <div class="mockup-adjust-list" style="grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));">
+                      <label class="mockup-adjust-row"><span class="mockup-adjust-head">Brightness <output>0</output></span><input type="range" class="mockup-range" data-adjust="brightness" min="-100" max="100" value="0" /></label>
+                      <label class="mockup-adjust-row"><span class="mockup-adjust-head">Contrast <output>0</output></span><input type="range" class="mockup-range" data-adjust="contrast" min="-100" max="100" value="0" /></label>
+                      <label class="mockup-adjust-row"><span class="mockup-adjust-head">Saturation <output>0</output></span><input type="range" class="mockup-range" data-adjust="saturation" min="-100" max="100" value="0" /></label>
+                      <label class="mockup-adjust-row"><span class="mockup-adjust-head">Warmth <output>0</output></span><input type="range" class="mockup-range" data-adjust="warmth" min="-100" max="100" value="0" /></label>
+                      <label class="mockup-adjust-row"><span class="mockup-adjust-head">Blur <output>0</output></span><input type="range" class="mockup-range" data-adjust="blur" min="0" max="100" value="0" /></label>
+                      <label class="mockup-adjust-row"><span class="mockup-adjust-head">Vignette <output>0</output></span><input type="range" class="mockup-range" data-adjust="vignette" min="0" max="100" value="0" /></label>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div class="mockup-actionbar">
                 <button class="btn btn-outline btn-sm" id="previewTabPrev">‹</button>
@@ -1273,7 +1327,7 @@
             </div>
           </div>
         </div>
-        <p class="panel-description">The preview is the exact composition rendered to the virtual desktop. Click any screen chip to focus, inspect outlines, or test shuffled layouts instantly.</p>
+        <p class="panel-description">The preview is the exact composition rendered to the virtual desktop. Click any screen chip to focus, drag the adjustment sliders, or shuffle the layout.</p>
       </div>
 
       <!-- Panel: Collage -->
@@ -1282,7 +1336,7 @@
           <div class="mockup-titlebar">
             <div class="mockup-titlebar-left">
               <div class="mockup-window-dots"><span></span><span></span><span></span></div>
-              <span class="mockup-window-title">Wallpaper Changer — Collage Mode</span>
+              <span class="mockup-window-title">KokoroPaper — Collage Mode</span>
             </div>
             <div class="mockup-window-actions"><span>🗕</span><span>🗖</span><span>✕</span></div>
           </div>
@@ -1345,7 +1399,7 @@
           <div class="mockup-titlebar">
             <div class="mockup-titlebar-left">
               <div class="mockup-window-dots"><span></span><span></span><span></span></div>
-              <span class="mockup-window-title">Wallpaper Changer — Video Wallpaper</span>
+              <span class="mockup-window-title">KokoroPaper — Video Wallpaper</span>
             </div>
             <div class="mockup-window-actions"><span>🗕</span><span>🗖</span><span>✕</span></div>
           </div>
@@ -1384,7 +1438,7 @@
           <div class="mockup-titlebar">
             <div class="mockup-titlebar-left">
               <div class="mockup-window-dots"><span></span><span></span><span></span></div>
-              <span class="mockup-window-title">Wallpaper Changer — Settings</span>
+              <span class="mockup-window-title">KokoroPaper — Settings</span>
             </div>
             <div class="mockup-window-actions"><span>🗕</span><span>🗖</span><span>✕</span></div>
           </div>
@@ -1400,8 +1454,8 @@
                   <span class="badge badge-success">Enabled</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.625rem 0.875rem; border: 1px solid var(--border); border-radius: var(--radius-md);">
-                  <span style="font-size: 0.875rem;">Crossfade Transition</span>
-                  <span class="badge badge-secondary">30 FPS (WorkerW)</span>
+                  <span style="font-size: 0.875rem;">All windows opacity</span>
+                  <span class="badge badge-secondary">70% · restored on quit</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.625rem 0.875rem; border: 1px solid var(--border); border-radius: var(--radius-md);">
                   <span style="font-size: 0.875rem;">App Language</span>
@@ -1426,7 +1480,7 @@
           </div>
           <div style="padding: 2rem; display: flex; justify-content: center; background: var(--muted);">
             <div style="width: 220px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); overflow: hidden; font-size: 0.8125rem;">
-              <div style="padding: 0.5rem 0.75rem; font-weight: 600; border-bottom: 1px solid var(--border);">WallpaperChanger</div>
+              <div style="padding: 0.5rem 0.75rem; font-weight: 600; border-bottom: 1px solid var(--border);">KokoroPaper</div>
               <div style="padding: 0.375rem 0.75rem; cursor: pointer;">👁 Show Window</div>
               <div style="padding: 0.375rem 0.75rem; cursor: pointer; background: var(--accent); font-weight: 500;">🔄 Apply Next Wallpaper</div>
               <div style="padding: 0.375rem 0.75rem; cursor: pointer;">⏸ Stop Rotation</div>
@@ -1474,11 +1528,11 @@
         <div class="stack-card">
           <span class="badge badge-outline stack-badge">Engine Layer</span>
           <h3 class="stack-title">Rust · Win32 · libmpv</h3>
-          <p class="stack-desc">Handles Win32 system APIs directly: multi-monitor collage composition, fade transitions, the WorkerW live video layer, and window transparency hooks.</p>
+          <p class="stack-desc">Talks to Win32 directly: multi-monitor collage composition and picture adjustments, the WorkerW live video layer, and the window-opacity hooks.</p>
           <div class="stack-chips">
             <span class="badge badge-secondary">Rust</span>
             <span class="badge badge-secondary">libmpv</span>
-            <span class="badge badge-secondary">Win32 GDI</span>
+            <span class="badge badge-secondary">Win32</span>
             <span class="badge badge-secondary">SIMD resampling</span>
           </div>
         </div>
@@ -1526,7 +1580,7 @@
             <div class="step-number">3</div>
             <div class="step-body">
               <h4 class="step-title">Launch and Enjoy</h4>
-              <p class="step-desc">Point to your wallpaper collection, verify the live preview, and start auto-rotation.</p>
+              <p class="step-desc">Point it at your wallpaper folder, tune the live preview, and start auto-rotation.</p>
             </div>
           </div>
         </div>
@@ -1563,7 +1617,7 @@ bun run tauri dev
       <div class="section-header">
         <span class="section-label">Command Line</span>
         <h2 class="section-title">Full control from <span class="gradient-text">the terminal.</span></h2>
-        <p class="section-sub">Automate wallpaper rotation and video clips with simple PowerShell commands.</p>
+        <p class="section-sub">The app itself is the CLI: give it a subcommand and it runs headless. Point <code>$app</code> at <code>%LOCALAPPDATA%\KokoroPaper\KokoroPaper.exe</code>.</p>
       </div>
 
       <div class="cli-grid">
@@ -1604,6 +1658,26 @@ bun run tauri dev
           </div>
           <div class="code-body">
             <pre id="cli-4"><code>&amp; $app video --folder C:\Videos</code></pre>
+          </div>
+        </div>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span>Picture adjustments</span>
+            <button class="copy-btn" data-target="cli-5">Copy</button>
+          </div>
+          <div class="code-body">
+            <pre id="cli-5"><code>&amp; $app apply --warmth 25 --brightness -10 --vignette 40</code></pre>
+          </div>
+        </div>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span>Effect + calmer desktop</span>
+            <button class="copy-btn" data-target="cli-6">Copy</button>
+          </div>
+          <div class="code-body">
+            <pre id="cli-6"><code>&amp; $app apply --effect bw --blur 20 --contrast 15</code></pre>
           </div>
         </div>
       </div>
@@ -1677,8 +1751,11 @@ bun run tauri dev
               <span class="badge badge-primary">Latest</span>
             </div>
             <ul class="changelog-list">
+              <li>New name: WallpaperChanger is now <strong>KokoroPaper</strong>, and your settings carry over untouched</li>
+              <li>Picture adjustments: brightness, contrast, saturation, warmth, blur, and vignette, previewed live</li>
+              <li>One opacity for every window, including windows opened later; it returns after a restart and is undone on quit</li>
               <li>Rebuilt engine — the app is now a single native program instead of two talking over a pipe</li>
-              <li>Previews and applying are around three times faster, and the picker loads a large folder in a fraction of the time</li>
+              <li>Previews and applying are around three times faster; newest-first rotation stays quick in folders of thousands of pictures</li>
               <li>Pictures whose file extension is wrong now open properly instead of failing the whole collage</li>
               <li>Cleaner shutdown: no video windows or mouse hooks left behind when you quit</li>
             </ul>
@@ -1772,7 +1849,7 @@ bun run tauri dev
             <ul class="changelog-list">
               <li>Hardware-accelerated video wallpaper support via libmpv and WorkerW desktop layer</li>
               <li>Window transparency mouse-wheel modifier adjustment</li>
-              <li>Smooth 30 FPS GDI crossfade transitions between wallpapers</li>
+              <li>Fade transitions between wallpapers</li>
             </ul>
           </div>
         </div>
@@ -1785,7 +1862,7 @@ bun run tauri dev
     <div class="container">
       <div class="cta-card">
         <h2 class="cta-title">Ready to transform your desktop?</h2>
-        <p class="cta-desc">Download WallpaperChanger and customize every monitor with collages or live videos — completely free.</p>
+        <p class="cta-desc">Download KokoroPaper and give every monitor its own collage or live video — completely free.</p>
         <div class="cta-actions">
           <a href="https://github.com/klysman08/wallpaper-changer-windows/releases" class="btn btn-primary btn-lg" target="_blank" rel="noopener">
             Download Installer
@@ -1803,10 +1880,10 @@ bun run tauri dev
     <div class="container footer-inner">
       <div class="footer-left">
         <div class="footer-brand">
-          <img src="icon.png" alt="WallpaperChanger Logo" />
-          <span>WallpaperChanger</span>
+          <img src="icon.png" alt="KokoroPaper logo" />
+          <span>KokoroPaper</span>
         </div>
-        <p class="footer-meta">MIT Licensed · Free forever · No telemetry</p>
+        <p class="footer-meta">Formerly WallpaperChanger · MIT Licensed · Free forever · No telemetry</p>
       </div>
 
       <div class="footer-links">

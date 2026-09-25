@@ -1,5 +1,5 @@
 /**
- * WallpaperChanger Documentation Website
+ * KokoroPaper Documentation Website
  * Modern Interactive Logic: Smooth Acoustic UI Sound, Multi-Tab Mockup Engine, Real Image Shuffler & Collage Grid
  */
 
@@ -924,6 +924,96 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  // ─── 15. PICTURE ADJUSTMENTS (desktop/src/components/wallpaper-tab.tsx) ───
+  // Each Adjustments card names the stage it drives. The sliders become three
+  // custom properties on that stage; style.css turns them into a filter on the
+  // collage, a warm/cool tint and a vignette over each monitor.
+  function adjustmentStyle(v) {
+    const filters = [];
+    if (v.brightness) filters.push(`brightness(${1 + v.brightness / 100})`);
+    if (v.contrast) filters.push(`contrast(${1 + v.contrast / 100})`);
+    if (v.saturation) filters.push(`saturate(${1 + v.saturation / 100})`);
+    if (v.blur) filters.push(`blur(${(v.blur / 100) * 3}px)`);
+    const w = v.warmth / 100;
+    const tint = w > 0
+      ? `rgba(255, 140, 40, ${w * 0.7})`
+      : w < 0 ? `rgba(60, 140, 255, ${-w * 0.7})` : 'transparent';
+    return {
+      filter: filters.length ? filters.join(' ') : 'none',
+      tint,
+      vignette: String(v.vignette / 100),
+    };
+  }
+
+  document.querySelectorAll('[data-adjust-for]').forEach((card) => {
+    const stage = document.getElementById(card.dataset.adjustFor);
+    const ranges = card.querySelectorAll('input[data-adjust]');
+    if (!stage || !ranges.length) return;
+
+    function update() {
+      const values = {};
+      ranges.forEach((r) => {
+        values[r.dataset.adjust] = parseInt(r.value, 10) || 0;
+        const out = r.closest('.mockup-adjust-row')?.querySelector('output');
+        if (out) out.textContent = r.value > 0 && r.min < 0 ? `+${r.value}` : r.value;
+      });
+      const style = adjustmentStyle(values);
+      stage.style.setProperty('--adj-filter', style.filter);
+      stage.style.setProperty('--adj-tint', style.tint);
+      stage.style.setProperty('--adj-vignette', style.vignette);
+    }
+
+    ranges.forEach((r) => {
+      r.addEventListener('input', () => { update(); markUnsaved(); });
+      // Double-clicking the label resets that one slider, as in the app.
+      const head = r.closest('.mockup-adjust-row')?.querySelector('.mockup-adjust-head');
+      if (head) {
+        head.addEventListener('dblclick', (e) => {
+          e.preventDefault();
+          r.value = 0;
+          SoundEngine.playClick();
+          update();
+        });
+      }
+    });
+
+    const reset = card.querySelector('.mock-adjust-reset');
+    if (reset) {
+      reset.addEventListener('click', () => {
+        ranges.forEach((r) => { r.value = 0; });
+        update();
+      });
+    }
+    update();
+  });
+
+  // ─── 16. ALL-WINDOWS OPACITY (desktop/src/components/transparency-tab.tsx) ───
+  const allWinSwitch = document.getElementById('mockAllWinSwitch');
+  const allWinSlider = document.getElementById('mockAllWinSlider');
+  const allWinVal = document.getElementById('mockAllWinVal');
+  const allWinPreview = document.getElementById('mockAllWinPreview');
+
+  function updateAllWindows() {
+    if (!allWinSlider || !allWinPreview) return;
+    const on = allWinSwitch ? allWinSwitch.checked : true;
+    const pct = parseInt(allWinSlider.value, 10) || 100;
+    if (allWinVal) allWinVal.textContent = `${pct}%`;
+    allWinSlider.disabled = !on;
+    allWinPreview.querySelectorAll('.fake-win').forEach((w) => {
+      w.style.opacity = on ? String(pct / 100) : '1';
+    });
+  }
+
+  if (allWinSlider) allWinSlider.addEventListener('input', () => { updateAllWindows(); markUnsaved(); });
+  if (allWinSwitch) {
+    allWinSwitch.addEventListener('change', () => {
+      SoundEngine.playToggle(allWinSwitch.checked);
+      updateAllWindows();
+      markUnsaved();
+    });
+  }
+  updateAllWindows();
 
   // ─── 12. INSTALLATION TABS ───
   const installTabs = document.querySelectorAll('.install-tab-btn');
