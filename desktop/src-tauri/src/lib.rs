@@ -11,7 +11,7 @@ use serde_json::{json, Value};
 use tauri::webview::PageLoadEvent;
 use tauri::{AppHandle, Manager, RunEvent, State, WindowEvent};
 use tauri_plugin_autostart::ManagerExt;
-use tauri_plugin_log::{Target, TargetKind};
+use tauri_plugin_log::{RotationStrategy, Target, TargetKind, TimezoneStrategy};
 use tauri_plugin_opener::OpenerExt;
 
 /// Passed to the app when *Windows* launches it, so a boot-time start goes straight
@@ -250,9 +250,22 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(
             tauri_plugin_log::Builder::new()
+                // Info, not the plugin's default of Trace. At Trace, `tao` logs a
+                // line per event-loop turn and `reqwest` a few per update check, and
+                // with the old 40 KB `KeepOne` limit the file was deleted and restarted
+                // every few minutes — the history a bug report needs was always gone.
+                .level(log::LevelFilter::Info)
+                .max_file_size(1_000_000)
+                .rotation_strategy(RotationStrategy::KeepSome(3))
+                // The user reads these against their own clock.
+                .timezone_strategy(TimezoneStrategy::UseLocal)
                 .targets([
-                    Target::new(TargetKind::Stdout),
+                    // The file first, so nothing ahead of it can hold it up.
                     Target::new(TargetKind::LogDir { file_name: None }),
+                    // A release build is a GUI-subsystem process with no console, so
+                    // stdout there can only fail or block; the CLI prints for itself.
+                    #[cfg(debug_assertions)]
+                    Target::new(TargetKind::Stdout),
                     // The webview target emits `log://log` for the debug panel to
                     // mirror. That emit is an `eval` in the webview, and when the
                     // webview is gone — Ctrl-C, or any teardown — the eval fails and

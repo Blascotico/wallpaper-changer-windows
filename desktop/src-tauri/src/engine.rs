@@ -17,6 +17,7 @@
 //! process to lose, wedge, or race.
 
 use std::sync::Arc;
+use std::time::{Duration, Instant};
 
 use serde_json::{json, Value};
 use tauri::{AppHandle, Emitter, Manager};
@@ -24,6 +25,9 @@ use wallpaper_core::{Core, Dispatch, EventSink, Notifier};
 
 /// Event name the webview listens on for unsolicited engine events.
 pub const ENGINE_EVENT: &str = "engine-event";
+
+/// A call at least this long is written to the log with its time.
+const SLOW_CALL: Duration = Duration::from_millis(100);
 
 /// Forwards core events to the webview.
 ///
@@ -130,7 +134,24 @@ impl Engine {
 
     /// Answer a request.
     pub async fn call(&self, method: &str, params: Value) -> Result<Value, String> {
-        match self.core.dispatch(method, &params).await {
+        let started = Instant::now();
+        let outcome = self.dispatch(method, &params).await;
+        // Every call worth waiting for is logged with its time, so "it is slow" can be
+        // answered from the log file instead of a guess. Metadata calls answer in a
+        // millisecond or two and stay out of it.
+        let elapsed = started.elapsed();
+        if elapsed >= SLOW_CALL {
+            log::info!(
+                "{method} took {} ms{}",
+                elapsed.as_millis(),
+                if outcome.is_ok() { "" } else { " (failed)" }
+            );
+        }
+        outcome
+    }
+
+    async fn dispatch(&self, method: &str, params: &Value) -> Result<Value, String> {
+        match self.core.dispatch(method, params).await {
             // The front end reads the "{kind}: {message}" prefix to tell a `busy` from
             // a `not_found`, so the shape of this string is part of the contract.
             Dispatch::Handled(result) => result.map_err(|e| format!("{}: {}", e.kind(), e)),

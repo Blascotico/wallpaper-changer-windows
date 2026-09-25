@@ -7,6 +7,7 @@
 
 use std::io::Cursor;
 use std::path::{Path, PathBuf};
+use std::time::Instant;
 
 use base64::Engine as _;
 use image::{codecs::png::PngEncoder, ImageEncoder, RgbImage};
@@ -52,6 +53,7 @@ pub fn preview(cfg: &Value, max_width: i64, images: Option<&[String]>) -> Result
     // before the downscale below.
     let cells = plan_collage(&monitors, collage_count(cfg), same_for_all(cfg));
 
+    let started = Instant::now();
     let shown = if max_width > 0 && canvas.width() > max_width as u32 {
         let ratio = max_width as f64 / canvas.width() as f64;
         let height = ((canvas.height() as f64 * ratio) as u32).max(1);
@@ -60,8 +62,19 @@ pub fn preview(cfg: &Value, max_width: i64, images: Option<&[String]>) -> Result
         canvas
     };
 
+    let scaled = Instant::now();
+    let png_base64 = encode_png(&shown)?;
+    log::info!(
+        "preview {}x{}: downscale {} ms, PNG {} ms, {} KB",
+        shown.width(),
+        shown.height(),
+        (scaled - started).as_millis(),
+        scaled.elapsed().as_millis(),
+        png_base64.len() / 1024,
+    );
+
     Ok(json!({
-        "png_base64": encode_png(&shown)?,
+        "png_base64": png_base64,
         "width": shown.width(),
         "height": shown.height(),
         "images": used,

@@ -12,6 +12,7 @@
 //! a real desktop underneath them.
 
 use std::path::{Path, PathBuf};
+use std::time::Instant;
 
 use image::RgbImage;
 use serde_json::Value;
@@ -141,10 +142,18 @@ fn write_and_set(
         std::fs::create_dir_all(parent)
             .map_err(|e| CoreError::io(format!("Could not create {}: {e}", parent.display())))?;
     }
+    let started = Instant::now();
     canvas
         .save_with_format(out, image::ImageFormat::Bmp)
         .map_err(|e| CoreError::io(format!("Could not write {}: {e}", out.display())))?;
-    setter.set(out)
+    let written = Instant::now();
+    let applied = setter.set(out);
+    log::info!(
+        "wallpaper set: BMP write {} ms, SystemParametersInfoW {} ms",
+        (written - started).as_millis(),
+        written.elapsed().as_millis(),
+    );
+    applied
 }
 
 /// The collage path: compose from the configuration, then apply.

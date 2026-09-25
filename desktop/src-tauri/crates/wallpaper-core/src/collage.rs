@@ -12,6 +12,7 @@
 
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
+use std::time::Instant;
 
 use image::RgbImage;
 use serde_json::{json, Value};
@@ -297,6 +298,7 @@ pub fn compose_collage(
     let count = collage_count(cfg);
     let same_for_all = same_for_all(cfg);
 
+    let started = Instant::now();
     let chosen: Vec<PathBuf> = match preset_images {
         Some(preset) if !preset.is_empty() => preset.iter().map(PathBuf::from).collect(),
         _ => {
@@ -340,7 +342,9 @@ pub fn compose_collage(
         }
     }
 
+    let selected = Instant::now();
     let fitted = fit_all(&wanted, &chosen, &fit_mode)?;
+    let decoded = Instant::now();
 
     for cell in &plan {
         let source_index = cell["image_index"].as_u64().unwrap_or(0) as usize % chosen.len();
@@ -361,8 +365,24 @@ pub fn compose_collage(
         .pointer("/display/effect")
         .and_then(Value::as_str)
         .unwrap_or("normal");
+    let pasted = Instant::now();
     let canvas = crate::effects::apply_effect(&canvas, effect)?;
+    let effected = Instant::now();
     let canvas = crate::adjust::apply(canvas, &Adjustments::from_config(cfg), monitors);
+
+    // Where a slow collage spends its time, one line per composition.
+    log::info!(
+        "composed {}x{} from {} picture(s), {} fitted: select {} ms, decode+fit {} ms, paste {} ms, effect {} ms, adjust {} ms",
+        canvas.width(),
+        canvas.height(),
+        chosen.len(),
+        wanted.len(),
+        (selected - started).as_millis(),
+        (decoded - selected).as_millis(),
+        (pasted - decoded).as_millis(),
+        (effected - pasted).as_millis(),
+        effected.elapsed().as_millis(),
+    );
 
     let used = chosen
         .iter()

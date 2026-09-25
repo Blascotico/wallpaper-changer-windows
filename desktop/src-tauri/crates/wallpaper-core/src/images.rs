@@ -11,6 +11,7 @@
 use std::collections::BTreeMap;
 use std::io::Cursor;
 use std::path::{Path, PathBuf};
+use std::time::SystemTime;
 
 use base64::Engine as _;
 use image::codecs::jpeg::JpegEncoder;
@@ -63,6 +64,26 @@ pub fn list_images(folder: impl AsRef<Path>) -> Vec<PathBuf> {
         .filter_map(Result::ok)
         .map(|e| e.path())
         .filter(|p| has_extension(p, SUPPORTED))
+        .collect()
+}
+
+/// [`list_images`], with each file's modification time read in the same pass.
+///
+/// On Windows the directory listing already carries the time (`FindNextFileW`
+/// returns it), so `DirEntry::metadata` costs no extra call per file, where
+/// `std::fs::metadata(path)` opens the file to ask. A time that cannot be read is
+/// `None`.
+pub fn list_images_dated(folder: impl AsRef<Path>) -> Vec<(PathBuf, Option<SystemTime>)> {
+    let Ok(entries) = std::fs::read_dir(folder.as_ref()) else {
+        return Vec::new();
+    };
+    entries
+        .filter_map(Result::ok)
+        .filter(|e| has_extension(&e.path(), SUPPORTED))
+        .map(|e| {
+            let modified = e.metadata().and_then(|m| m.modified()).ok();
+            (e.path(), modified)
+        })
         .collect()
 }
 
